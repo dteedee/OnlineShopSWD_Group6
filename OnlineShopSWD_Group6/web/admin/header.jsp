@@ -47,7 +47,7 @@
                 <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                     <div class="sb-sidenav-menu">
                         <div class="nav">
-                            
+
                             <a class="nav-link" href="${contextPath}/admin/dashboard">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Dashboard
@@ -55,6 +55,12 @@
                             <a class="nav-link" href="${contextPath}/admin/user-management">
                                 <div class="sb-nav-link-icon"><i class="fas fa-user-alt"></i></div>
                                 Quản lý người dùng
+                            </a>
+                            </a>
+                                <a class="nav-link" href="${contextPath}/admin/product-management">
+                                <div class="sb-nav-link-icon"><i class="fas fa-setting-alt"></i></div>
+                                Quản lý sản phẩm
+                            </a>    
                             </a>
                                 <a class="nav-link" href="${contextPath}/admin/settings">
                                 <div class="sb-nav-link-icon"><i class="fas fa-setting-alt"></i></div>

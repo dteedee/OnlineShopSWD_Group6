@@ -38,7 +38,7 @@ public class ProductManagementController extends HttpServlet {
         String emailSession = (String) session.getAttribute("email");
         Users user = userDAO.getUserByEmail(emailSession);
         if (user != null) {
-            if (user.getRole().equalsIgnoreCase("marketing")) {
+            if (user.getRole().equalsIgnoreCase("admin")) {
                 String search = request.getParameter("search");
                 String categoryStr = request.getParameter("category");
                 List<Category> listCategory = productDAO.getAllCategories();
@@ -66,7 +66,7 @@ public class ProductManagementController extends HttpServlet {
         String emailSession = (String) session.getAttribute("email");
         Users currentUser = userDAO.getUserByEmail(emailSession);
 
-        if (currentUser != null && currentUser.getRole().equalsIgnoreCase("marketing")) {
+        if (currentUser != null && currentUser.getRole().equalsIgnoreCase("admin")) {
             String action = request.getParameter("action");
             if ("edit".equals(action)) {
                 String productIdStr = request.getParameter("productID");
@@ -89,7 +89,7 @@ public class ProductManagementController extends HttpServlet {
                         || warrantyPeriod == null || warrantyPeriod.trim().isEmpty()
                         || amountStr == null || !amountStr.matches("\\d+")) {
                     session.setAttribute("notificationErr", "Vui lòng nhập đầy đủ thông tin hợp lệ.");
-                    response.sendRedirect(request.getContextPath() + "/marketing/product-management");
+                    response.sendRedirect(request.getContextPath() + "/admin/product-management");
                     return;
                 }
 
@@ -101,7 +101,7 @@ public class ProductManagementController extends HttpServlet {
                 Products product = productDAO.getProductByID(productID);
                 if (product == null) {
                     session.setAttribute("notificationErr", "Sản phẩm không tồn tại.");
-                    response.sendRedirect(request.getContextPath() + "/marketing/product-management");
+                    response.sendRedirect(request.getContextPath() + "/admin/product-management");
                     return;
                 }
 
@@ -154,7 +154,7 @@ public class ProductManagementController extends HttpServlet {
                         || amountStr == null || !amountStr.matches("\\d+")) {
 
                     session.setAttribute("notificationErr", "Vui lòng điền đầy đủ thông tin hợp lệ.");
-                    response.sendRedirect(request.getContextPath() + "/marketing/product-management");
+                    response.sendRedirect(request.getContextPath() + "/admin/product-management");
                     return;
                 }
 
@@ -201,7 +201,7 @@ public class ProductManagementController extends HttpServlet {
 
                 if (productIdStr == null || productIdStr.trim().isEmpty()) {
                     session.setAttribute("notificationErr", "ID sản phẩm không hợp lệ.");
-                    response.sendRedirect(request.getContextPath() + "/marketing/product-management");
+                    response.sendRedirect(request.getContextPath() + "/admin/product-management");
                     return;
                 }
 
@@ -210,7 +210,7 @@ public class ProductManagementController extends HttpServlet {
 
                 if (product == null) {
                     session.setAttribute("notificationErr", "Sản phẩm không tồn tại.");
-                    response.sendRedirect(request.getContextPath() + "/marketing/product-management");
+                    response.sendRedirect(request.getContextPath() + "/admin/product-management");
                     return;
                 }
 
@@ -224,7 +224,7 @@ public class ProductManagementController extends HttpServlet {
                 }
 
             }
-            response.sendRedirect(request.getContextPath() + "/marketing/product-management");
+            response.sendRedirect(request.getContextPath() + "/admin/product-management");
         } else {
             session.setAttribute("notificationErr", "Bạn không có quyền truy cập vào trang này");
             response.sendRedirect(request.getContextPath() + "/Login.jsp");
