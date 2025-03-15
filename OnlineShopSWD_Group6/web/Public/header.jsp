@@ -102,7 +102,7 @@
 
                                 <c:forEach var="cate" items="${categories}">
                                     <li class="header__table-items2">
-                                        <a href="/Project-SWP391-G2-SP25/productsList?category=${cate.categoryID}" class="header__table-link2">${cate.categoryName}</a>
+                                        <a href="/OnlineShopSWD_Group6/productsList?category=${cate.categoryID}" class="header__table-link2">${cate.categoryName}</a>
                                     </li>
                                 </c:forEach>
 
@@ -140,7 +140,7 @@
                 <div class="header__cart">
                     <ul class="header__cart-list">
                         <li class="header__cart-items">
-                            <a href="/Project-SWP391-G2-SP25/Cart" class="header__cart-link">
+                            <a href="/OnlineShopSWD_Group6/Cart" class="header__cart-link">
                                 <div class="icon">
                                     <i class="icon-i fa-solid fa-cart-shopping"></i>
                                 </div>
@@ -200,7 +200,7 @@
                             <ul class="header__navbar-nav-list">
                                 <c:forEach var="cate" items="${categories}">
                                     <li class="header__navbar-nav-items">
-                                        <a href="/Project-SWP391-G2-SP25/productsList?category=${cate.categoryID}" class="header__navbar-nav-link">${cate.categoryName}</a>
+                                        <a href="/OnlineShopSWD_Group6/productsList?category=${cate.categoryID}" class="header__navbar-nav-link">${cate.categoryName}</a>
                                     </li>
                                 </c:forEach>
                             </ul>

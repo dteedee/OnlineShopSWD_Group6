@@ -68,22 +68,13 @@ public class LoginServlet extends HttpServlet {
                             
 
                     Users u = userDAO.getUserByEmail(email);
-                    
-//                    if (u.getStatus().equalsIgnoreCase("Deactive")) {
-//                        session.setAttribute("notificationErr", "Tài khoản của bạn đã bị vô hiệu hóa!");
-//                        response.sendRedirect("Login.jsp");
-//                        return;
-//                    }
+
                     if (u.getRole().equalsIgnoreCase("Admin")) {
                         response.sendRedirect("admin/dashboard");
-                    } else if (u.getRole().equalsIgnoreCase("marketing")) {
-                        response.sendRedirect("marketing/dashboard");
-                          } else if (u.getRole().equalsIgnoreCase("sale")) {
-                        response.sendRedirect("sale/OrdersList");
                     }  else {
                         // Chuyển hướng người dùng đến trang HomePage sau khi đăng nhập thành công
                         session.setAttribute("user", userDAO.getUserByUserName(username));
-                        response.sendRedirect("/Project-SWP391-G2-SP25/home");
+                        response.sendRedirect("/OnlineShopSWD_Group6/home");
                     }
 
                 } else {
@@ -129,7 +120,7 @@ public class LoginServlet extends HttpServlet {
         java.sql.Connection conn = null;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/EcommerceDB", "root", "1234");
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/OSSDB", "root", "1234");
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -61,7 +61,7 @@
                         <c:forEach var="product" items="${promotedProducts}" varStatus="status">
                             <c:if test="${status.index < 5}">  <%-- Chỉ hiển thị 5 sản phẩm đầu tiên --%>
                                 <li class="main__left-product-items main__left-product-items--vertical">
-                                    <a href="/Project-SWP391-G2-SP25/ProductDetailControllerCustomer?id=${product.productID}" class="main__left-product-link">
+                                    <a href="/OnlineShopSWD_Group6/ProductDetailControllerCustomer?id=${product.productID}" class="main__left-product-link">
                                         <img src="${product.imageLink}" alt="${product.productName}" class="main__left-product-img" />
                                         <span class="main__left-product-title">${product.productName}</span>
                                     </a>
@@ -77,25 +77,6 @@
                         </c:forEach>
                     </ul>
 
-                    <!-- Main Left New products : Sản phẩm mới -->
-                    <!-- Một số sản phẩm mới của cửa hàng - Hiển thị dưới Sản phẩm khuyến mãi -->
-                    <h2 class="main__left-title main__left-margin-top">SẢN PHẨM MỚI</h2>
-                    <ul class="main__left-product-list">
-                        <c:forEach var="product" items="${newProducts}" varStatus="status">
-                            <c:if test="${status.index < 5}">
-                                <li class="main__left-product-items main__left-product-items--vertical">
-                                    <a href="/Project-SWP391-G2-SP25/ProductDetailControllerCustomer?id=${product.productID}" class="main__left-product-link">
-                                        <img src="${product.imageLink}" alt="${product.productName}" class="main__left-product-img" />
-                                        <span class="main__left-product-title">${product.productName}</span>
-                                    </a>
-                                    <br />
-                                    <span class="main__right-sensor-price">
-                                        <strong><fmt:formatNumber value="${product.price}" type="number" groupingUsed="true"/>đ</strong>
-                                    </span>
-                                </li>
-                            </c:if>
-                        </c:forEach>
-                    </ul>
                 </div>
 
                 <!-- Main Right -->
@@ -138,7 +119,7 @@
                         <div class="main__right-sensor-list">
                             <c:forEach var="product" items="${fanProducts}">
                                 <div class="main__right-sensor-items">
-                                    <a href="/Project-SWP391-G2-SP25/ProductDetailControllerCustomer?id=${product.productID}" class="main__right-sensor-link">
+                                    <a href="/OnlineShopSWD_Group6/ProductDetailControllerCustomer?id=${product.productID}" class="main__right-sensor-link">
                                         <img src="${product.imageLink}" alt="${product.productName}" class="main__right-sensor-img" />
                                         <div class="main__right-sensor-title">${product.productName}</div>
                                     </a>
@@ -166,7 +147,7 @@
                                 <c:forEach var="product" items="${lightingProducts}">
                                     <div class="swiper-slide">
                                         <div class="main__right-sensor-item">
-                                            <a href="/Project-SWP391-G2-SP25/ProductDetailControllerCustomer?id=${product.productID}" class="main__right-sensor-link">
+                                            <a href="/OnlineShopSWD_Group6/ProductDetailControllerCustomer?id=${product.productID}" class="main__right-sensor-link">
                                                 <img src="${product.imageLink}" alt="${product.productName}" class="main__right-sensor-img" />
                                                 <div class="main__right-sensor-title">${product.productName}</div>
                                             </a>
@@ -202,7 +183,7 @@
                                 <c:forEach var="product" items="${electricalSwitchProducts}">
                                     <div class="swiper-slide">
                                         <div class="main__right-sensor-item">
-                                            <a href="/Project-SWP391-G2-SP25/ProductDetailControllerCustomer?id=${product.productID}" class="main__right-sensor-link">
+                                            <a href="/OnlineShopSWD_Group6/ProductDetailControllerCustomer?id=${product.productID}" class="main__right-sensor-link">
                                                 <img src="${product.imageLink}" alt="${product.productName}" class="main__right-sensor-img" />
                                                 <div class="main__right-sensor-title">${product.productName}</div>
                                             </a>
@@ -237,7 +218,7 @@
                         <div class="main__right-sensor-list">
                             <c:forEach var="product" items="${smartDevices}">
                                 <div class="main__right-sensor-items">
-                                    <a href="/Project-SWP391-G2-SP25/ProductDetailControllerCustomer?id=${product.productID}" class="main__right-sensor-link">
+                                    <a href="/OnlineShopSWD_Group6/ProductDetailControllerCustomer?id=${product.productID}" class="main__right-sensor-link">
                                         <img src="${product.imageLink}" alt="${product.productName}" class="main__right-sensor-img" />
                                         <div class="main__right-sensor-title">${product.productName}</div>
                                     </a>
