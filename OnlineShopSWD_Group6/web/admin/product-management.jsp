@@ -68,7 +68,7 @@
                             <c:forEach items="${products}" var="p" varStatus="status">
                                 <tr>
                                     <td>${status.index + 1}</td>
-                                    <td><img src="${contextPath}/${p.imageLink}" width="90" height="60" alt="${p.productName}"/></td>
+                                    <td><img src="${p.imageLink}" width="90" height="80" alt="${p.productName}"/></td>
                                     <td>${p.productName}</td>
                                     <td>${p.category.categoryName}</td>
                                     <td>${p.provider}</td>

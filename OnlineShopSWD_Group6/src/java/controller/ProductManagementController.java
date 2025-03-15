@@ -14,22 +14,48 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
-import java.io.File;
 import java.util.List;
 import java.util.UUID;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import java.io.InputStream;
+import java.util.Map;
 
-/**
- *
- * @author Admin
- */
 @WebServlet(name = "ProductManagementController", urlPatterns = {"/admin/product-management"})
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, // 1MB
         maxFileSize = 1024 * 1024 * 5, // 5MB
         maxRequestSize = 1024 * 1024 * 10) // 10MB
 public class ProductManagementController extends HttpServlet {
 
-    UsersDAO userDAO = new UsersDAO();
-    ProductsDAO productDAO = new ProductsDAO();
+    private UsersDAO userDAO = new UsersDAO();
+    private ProductsDAO productDAO = new ProductsDAO();
+    private Cloudinary cloudinary;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        // Không khởi tạo Cloudinary ở đây để tránh làm hỏng servlet
+        // Khởi tạo sẽ được thực hiện khi cần (lazy initialization)
+    }
+
+    private void initializeCloudinary() throws ServletException {
+        if (cloudinary == null) {
+            synchronized (this) {
+                if (cloudinary == null) {
+                    try {
+                        cloudinary = new Cloudinary(ObjectUtils.asMap(
+                                "cloud_name", "dzutsz5ym",
+                                "api_key", "717311866718988",
+                                "api_secret", "Bgrn_HbsmA6Vv7x4CWq_JZmGnpo",
+                                "secure", "true"
+                        ));
+                    } catch (Exception e) {
+                        throw new ServletException("Không thể khởi tạo Cloudinary: " + e.getMessage(), e);
+                    }
+                }
+            }
+        }
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -115,23 +141,38 @@ public class ProductManagementController extends HttpServlet {
                 product.setAmount(amount);
 
                 if (filePart != null && filePart.getSize() > 0) {
-                    String uploadDir = getServletContext().getRealPath("/") + "assets/img/";
-                    File uploadDirFile = new File(uploadDir);
-                    if (!uploadDirFile.exists()) {
-                        uploadDirFile.mkdir();
+                    try {
+                        initializeCloudinary();
+
+                        InputStream inputStream = filePart.getInputStream();
+                        byte[] fileBytes = inputStream.readAllBytes(); 
+
+                        Map<String, Object> uploadResult = cloudinary.uploader().upload(
+                                fileBytes, 
+                                ObjectUtils.asMap(
+                                        "folder", "products",
+                                        "public_id", UUID.randomUUID().toString(),
+                                        "resource_type", "auto"
+                                )
+                        );
+
+                        // Lấy URL ảnh
+                        String imageUrl = (String) uploadResult.get("secure_url");
+                        System.out.println("Image URL from Cloudinary: " + imageUrl); 
+                        product.setImageLink(imageUrl);
+
+                    } catch (Exception e) {
+                        session.setAttribute("notificationErr", "Lỗi khi upload ảnh: " + e.getMessage());
+                        response.sendRedirect(request.getContextPath() + "/admin/product-management");
+                        return;
                     }
-                    String fileName = UUID.randomUUID().toString() + "-" + filePart.getSubmittedFileName();
-                    String filePath = uploadDir + fileName;
-                    filePart.write(filePath);
-                    product.setImageLink("assets/img/" + fileName);
                 }
 
-                // Cập nhật vào DB
                 boolean updated = productDAO.updateProducts(product);
                 if (updated) {
                     session.setAttribute("notification", "Cập nhật sản phẩm thành công!");
                 } else {
-                    session.setAttribute("notificationErr", "Cập nhật sản phẩm thất bại. Vui lòng kiểm tra lại.");
+                    session.setAttribute("notificationErr", "Cập nhật sản phẩm thất bại.");
                 }
             } else if ("add".equals(action)) {
                 String productName = request.getParameter("productName");
@@ -142,10 +183,8 @@ public class ProductManagementController extends HttpServlet {
                 String oldpriceStr = request.getParameter("oldprice");
                 String warrantyPeriod = request.getParameter("warrantyPeriod");
                 String amountStr = request.getParameter("amount");
+                Part filePart = request.getPart("imageFile");
 
-                Part filePart = request.getPart("imageFile"); // Uploaded file
-
-                // Input validation
                 if (productName == null || productName.trim().isEmpty()
                         || categoryID == null || categoryID.trim().isEmpty()
                         || provider == null || provider.trim().isEmpty()
@@ -162,21 +201,6 @@ public class ProductManagementController extends HttpServlet {
                 float oldprice = Float.parseFloat(oldpriceStr);
                 int amount = Integer.parseInt(amountStr);
 
-                // Handle file upload
-                String fileName = null;
-                if (filePart != null && filePart.getSize() > 0) {
-                    String uploadDir = getServletContext().getRealPath("/") + "assets/img/";
-                    File uploadDirFile = new File(uploadDir);
-                    if (!uploadDirFile.exists()) {
-                        uploadDirFile.mkdir();
-                    }
-
-                    fileName = UUID.randomUUID().toString() + "-" + filePart.getSubmittedFileName();
-                    String filePath = uploadDir + fileName;
-                    filePart.write(filePath);
-                }
-
-                // Create Product object
                 Products product = new Products();
                 product.setCategoryID(categoryID);
                 product.setProductName(productName);
@@ -186,9 +210,36 @@ public class ProductManagementController extends HttpServlet {
                 product.setOldprice(oldprice);
                 product.setWarrantyPeriod(warrantyPeriod + " năm");
                 product.setAmount(amount);
-                product.setImageLink("assets/img/" + fileName); // Save relative path
 
-                // Add product to database
+                if (filePart != null && filePart.getSize() > 0) {
+                    try {
+                        initializeCloudinary();
+
+                        InputStream inputStream = filePart.getInputStream();
+                        byte[] fileBytes = inputStream.readAllBytes(); 
+
+                        Map<String, Object> uploadResult = cloudinary.uploader().upload(
+                                fileBytes, 
+                                ObjectUtils.asMap(
+                                        "folder", "products",
+                                        "public_id", UUID.randomUUID().toString(),
+                                        "resource_type", "auto"
+                                )
+                        );
+
+                        // Lấy URL ảnh
+                        String imageUrl = (String) uploadResult.get("secure_url");
+                        product.setImageLink(imageUrl);
+
+                    } catch (Exception e) {
+                        session.setAttribute("notificationErr", "Lỗi khi upload ảnh: " + e.getMessage());
+                        response.sendRedirect(request.getContextPath() + "/admin/product-management");
+                        return;
+                    }
+                } else {
+                    product.setImageLink(null);
+                }
+
                 boolean added = productDAO.addProducts(product);
                 if (added) {
                     session.setAttribute("notification", "Thêm sản phẩm thành công!");
@@ -222,7 +273,6 @@ public class ProductManagementController extends HttpServlet {
                 } else {
                     session.setAttribute("notificationErr", "Cập nhật trạng thái sản phẩm thất bại.");
                 }
-
             }
             response.sendRedirect(request.getContextPath() + "/admin/product-management");
         } else {
