@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
 <div id="layoutSidenav_content">
@@ -68,7 +69,8 @@
                             <c:forEach items="${products}" var="p" varStatus="status">
                                 <tr>
                                     <td>${status.index + 1}</td>
-                                    <td><img src="${p.imageLink}" width="90" height="80" alt="${p.productName}"/></td>
+                                    <td><img src="${fn:startsWith(p.imageLink, 'https://') ? p.imageLink : pageContext.request.contextPath.concat('/').concat(p.imageLink)}" 
+                                             width="90" height="80" alt="${p.productName}"/></td>
                                     <td>${p.productName}</td>
                                     <td>${p.category.categoryName}</td>
                                     <td>${p.provider}</td>
@@ -100,7 +102,7 @@
                                                 data-warranty="${p.warrantyPeriod}"
                                                 data-amount="${p.amount}"
                                                 data-description="${p.description}"
-                                                data-image="${contextPath}/${p.imageLink}">
+                                                data-image="${fn:startsWith(p.imageLink, 'https://') ? p.imageLink : pageContext.request.contextPath.concat('/').concat(p.imageLink)}">
                                             <i class="fa fa-pen" style="color: white"></i>
                                         </button>
                                     </td>
