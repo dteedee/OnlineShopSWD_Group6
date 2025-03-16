@@ -35,7 +35,7 @@ public class ResetPasswordController extends HttpServlet {
         boolean emailExists = false;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/EcommerceDB", "root", "1234");
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/OSSDB", "root", "1234");
             PreparedStatement pst = conn.prepareStatement("SELECT * FROM Users WHERE Email = ?");
             pst.setString(1, email);
             ResultSet rs = pst.executeQuery();
@@ -65,7 +65,7 @@ public class ResetPasswordController extends HttpServlet {
             props.put("mail.smtp.port", "465");
             Session session = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
                 protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication("luuthequangbkvip@gmail.com", "oouvorqzkguxbmez"); // Đặt email và mật khẩu của bạn
+                    return new PasswordAuthentication("tungduongvbhp@gmail.com", "Tungduong121004"); // Đặt email và mật khẩu của bạn
                 }
             });
 

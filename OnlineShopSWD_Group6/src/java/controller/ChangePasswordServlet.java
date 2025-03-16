@@ -16,7 +16,7 @@ import java.sql.ResultSet;
 @WebServlet(name = "ChangePasswordServlet", urlPatterns = {"/ChangePasswordServlet"})
 public class ChangePasswordServlet extends HttpServlet {
 
-    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/EcommerceDB";
+    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/OSSDB";
     private static final String JDBC_USER = "root";
     private static final String JDBC_PASSWORD = "1234";
 
@@ -51,7 +51,7 @@ public class ChangePasswordServlet extends HttpServlet {
         }
 
         // Kết nối tới cơ sở dữ liệu
-        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/EcommerceDB", "root", "1234")) {
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/OSSDB", "root", "1234")) {
             // Kiểm tra mật khẩu hiện tại có đúng không
             String checkPasswordQuery = "SELECT * FROM Users WHERE Email = ? AND Password = ?";
             try (PreparedStatement stmt = conn.prepareStatement(checkPasswordQuery)) {

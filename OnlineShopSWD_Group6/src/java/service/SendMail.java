@@ -7,8 +7,8 @@ import java.util.Properties;
 
 public class SendMail {
 
-    private String fromEmail = "daocongdanh47@gmail.com";
-    private String password = "twprarakvduhxvxi";
+    private String fromEmail = "tungduongvbhp@gmail.com";
+    private String password = "Tungduong121004";
     // password: Mật khẩu ứng dụng
 
     public void sendMail(String toEmail, String subject, String body) {
