@@ -24,8 +24,8 @@ import javax.mail.internet.MimeMessage;
 
 @WebServlet(name = "ResetPasswordController", urlPatterns = {"/ResetPassword"})
 public class ResetPasswordController extends HttpServlet {
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String email = request.getParameter("email");
         RequestDispatcher dispatcher = null;
         int otpvalue = 0;
@@ -40,55 +40,64 @@ public class ResetPasswordController extends HttpServlet {
             pst.setString(1, email);
             ResultSet rs = pst.executeQuery();
 
-            // Nếu email tồn tại trong cơ sở dữ liệu
             if (rs.next()) {
                 emailExists = true;
             }
-
+            conn.close();
         } catch (Exception e) {
             e.printStackTrace();
+            request.setAttribute("message", "Lỗi kết nối cơ sở dữ liệu!");
+            dispatcher = request.getRequestDispatcher("ResetPassword.jsp");
+            dispatcher.forward(request, response);
+            return;
         }
 
         if (emailExists) {
-            // Nếu email tồn tại, tiếp tục gửi OTP
             Random rand = new Random();
-            otpvalue = rand.nextInt(1255650);
-            
+            otpvalue = rand.nextInt(900000) + 100000; // Tạo OTP 6 chữ số
 
-            // Thiết lập thông số email
             String to = email;
+            String from = "tungduongjob@gmail.com";
             Properties props = new Properties();
             props.put("mail.smtp.host", "smtp.gmail.com");
-            props.put("mail.smtp.socketFactory.port", "465");
-            props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-            props.put("mail.smtp.auth", "true");
             props.put("mail.smtp.port", "465");
-            Session session = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
+            props.put("mail.smtp.auth", "true");
+            props.put("mail.smtp.starttls.enable", "true");
+            props.put("mail.smtp.starttls.required", "true");
+            props.put("mail.smtp.localhost", "localhost"); // Ghi đè hostname thành "localhost"
+            props.put("mail.debug", "true"); // Bật debug chi tiết
+
+            Session session = Session.getInstance(props, new javax.mail.Authenticator() {
                 protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication("tungduongvbhp@gmail.com", "Tungduong121004"); // Đặt email và mật khẩu của bạn
+                    return new PasswordAuthentication("tungduongjob@gmail.com", "wivb rycz hnot cvxo"); 
                 }
             });
 
             try {
                 MimeMessage message = new MimeMessage(session);
-                message.setFrom(new InternetAddress(email)); 
+                message.setFrom(new InternetAddress(from));
                 message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-                message.setSubject("Shop 4 Electrical");
-                message.setText("Your OTP is: " + otpvalue);
+                message.setSubject("Shop 4 Electrical - Password Reset OTP");
+                message.setText("Mã OTP để đặt lại mật khẩu của bạn là: " + otpvalue);
                 Transport.send(message);
-                System.out.println("Tin nhắn đã được gửi thành công");
-            } catch (MessagingException e) {
-                throw new RuntimeException(e);
-            }
+                System.out.println("Đã gửi OTP thành công đến: " + to);
 
-            dispatcher = request.getRequestDispatcher("EnterOtp.jsp");
-            request.setAttribute("message", "OTP được gửi đến email của bạn");
-            mySession.setAttribute("otp", otpvalue);
-            mySession.setAttribute("email", email);
-            mySession.setAttribute("otpGeneratedTime", java.time.Instant.now()); // Thêm thời gian OTP được tạo
-            dispatcher.forward(request, response);
+                dispatcher = request.getRequestDispatcher("EnterOtp.jsp");
+                request.setAttribute("message", "OTP đã được gửi đến email của bạn!");
+                mySession.setAttribute("otp", otpvalue);
+                mySession.setAttribute("email", email);
+                mySession.setAttribute("otpGeneratedTime", java.time.Instant.now());
+                dispatcher.forward(request, response);
+
+            } catch (MessagingException e) {
+                e.printStackTrace();
+                String errorMessage = "Lỗi khi gửi email OTP. Chi tiết: " + e.getMessage();
+                System.err.println(errorMessage);
+                request.setAttribute("message", errorMessage);
+                dispatcher = request.getRequestDispatcher("ResetPassword.jsp");
+                dispatcher.forward(request, response);
+            }
         } else {
-            // Nếu email không tồn tại, thông báo lỗi
             request.setAttribute("message", "Email không tồn tại!");
             dispatcher = request.getRequestDispatcher("ResetPassword.jsp");
             dispatcher.forward(request, response);
