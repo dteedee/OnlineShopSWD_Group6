@@ -196,7 +196,7 @@
                 </div>
               </div>
                 <a href="/OnlineShopSWD_Group6/home"><button class="btn btn-default" type="submit">Continue shopping <i class="fa fa-shopping-cart"></i></button></a>
-                <form id="checkoutForm" action="CartContact" method="POST">
+                <form id="checkoutForm" action="ComfirmOrder" method="POST">
                 <input type="hidden" name="selectedItems" id="selectedItemsInput" />
                 <button class="btn btn-primary" id="checkoutButton">Checkout <i class="fa fa-check"></i></button>
                 </form>

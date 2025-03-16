@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import org.json.JSONObject;
 
-@WebServlet(name = "ConfirmOrderController", urlPatterns = {"/ConfirmOrder"})
+@WebServlet(name = "ConfirmOrderController", urlPatterns = {"/ConfirmOrder2"})
 public class ConfirmOrderController extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
