@@ -26,9 +26,16 @@ public class CartController extends HttpServlet {
         CartItemsDAO ciDAO = new CartItemsDAO();
         Users user = (Users) session.getAttribute("user");
         if(user!=null){
+            if(cDAO.getCartByCustomerID(user.getUserID())!=null){
             Map<Integer, CartItems> list = ciDAO.getCartItemsByCartIDasMap(cDAO.getCartByCustomerID(user.getUserID()).getCartID());
             request.setAttribute("list", list);
             request.getRequestDispatcher("Cart.jsp").forward(request, response);
+            }else{
+                cDAO.addCart(new Carts(user.getUserID(), "Normal"));
+                Map<Integer, CartItems> list = ciDAO.getCartItemsByCartIDasMap(cDAO.getCartByCustomerID(user.getUserID()).getCartID());
+                request.setAttribute("list", list);
+                request.getRequestDispatcher("Cart.jsp").forward(request, response);
+            }
         }else{
             request.getRequestDispatcher("Cart.jsp").forward(request, response);
         }
