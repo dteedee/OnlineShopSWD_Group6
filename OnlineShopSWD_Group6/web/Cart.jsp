@@ -1,9 +1,3 @@
-<%-- 
-    Document   : Cart
-    Created on : Mar 1, 2025, 5:30:10 PM
-    Author     : admin
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="dao.*"%>
 <%@page import="model.*"%>
@@ -66,6 +60,14 @@
         <link rel="stylesheet" href="assets/fonts/fontawesome-free-6.0.0-web/css/all.css" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swapsubset=vietnamese" />
 
+        
+
+        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
         <script type="text/javascript">
             function doDelete(id) {
                 if (confirm("Bạn có chắc chắn muốn xóa ?")) {
@@ -105,17 +107,16 @@
                       Map<Integer, CartItems> list = (Map<Integer, CartItems>) request.getAttribute("list");
                       Map<Integer, Integer> cart = (Map<Integer, Integer>) session.getAttribute("cart");
                       ProductsDAO pDAO = new ProductsDAO();
-                      if(list!=null){
                         for (int id : list.keySet()) {
                             CartItems ci = list.get(id);
                             Products p = pDAO.getProductByID(ci.getProductID());
                    %>     
                   <tr>
                     <td class="goods-page-image">
-                        <input type="checkbox" name="selectedItems" value="<%=p.getProductID()%>" checked />
+                        <input type="checkbox" name="selectedItems" value="<%=ci.getCartItemID()%>" checked />
                     </td>
                     <td class="goods-page-image">
-                        <a href="/OnlineShopSWD_Group6/ProductDetailController?id=<%=p.getProductID()%>"><img src="<%=p.getImageLink()%>"></a>
+                        <a href="/Project-SWP391-G2-SP25/ProductDetailController?id=<%=p.getProductID()%>"><img src="<%=p.getImageLink()%>"></a>
                     </td>
                     <td class="goods-page-description">
                       <h3><a href="javascript:;">Cool green dress with red bell</a></h3>
@@ -142,46 +143,6 @@
                   </tr>
                   <%
                         }
-                      }else if(cart!=null){
-                        for (int id : cart.keySet()) {
-                            Products p = pDAO.getProductByID(id);
-                  %>
-                  <tr>
-                    <td class="goods-page-image">
-                        <input type="checkbox" name="selectedItems" value="<%=id%>" checked />
-                    </td>
-                    <td class="goods-page-image">
-                        <a href="/OnlineShopSWD_Group6/ProductDetailController?id=<%=p.getProductID()%>"><img src="<%=p.getImageLink()%>"></a>
-                    </td>
-                    <td class="goods-page-description">
-                      <h3><a href="javascript:;">Cool green dress with red bell</a></h3>
-                      <p><strong><%=p.getProductName()%></strong></p>
-                      <em><%=p.getDescription()%></em>
-                    </td>
-                    <td class="goods-page-quantity">
-                        <div class="product-quantity">
-                          <button class="btn btn-decrease" data-cart-item-id="<%=id%>">-</button>
-                          <input id="product-quantity-<%=id%>" type="text" value="<%=cart.get(id)%>" class="form-control input-sm quantity-input" readonly>
-                          <input id="product-quantity1-<%=id%>" type="text" value="<%=cart.get(id)%>" hidden>
-                          <button class="btn btn-increase" data-cart-item-id="<%=id%>">+</button>
-                        </div>
-                    </td>
-                    <td class="goods-page-price">
-                        <strong><span id="product-price-<%=id%>"><%=p.getPriceFormat()%></span></strong>
-                      </td>
-                      <td class="goods-page-total">
-                        <strong><span id="product-total-<%=id%>"><%=p.getPrice() * cart.get(id)%></span></strong>
-                    </td>
-                    <td class="del-goods-col">
-                        <a class="del-goods" onclick="doDelete('<%=id%>')">&nbsp;</a>
-                    </td>
-                  </tr>
-                  <%
-
-                       }}else{
-                            cart = new HashMap<>();
-                            session.setAttribute("cart", cart); // Lưu giỏ hàng vào session
-                        }
                   %>
                 </table>
                 </div>
@@ -195,8 +156,8 @@
                     </ul>
                 </div>
               </div>
-                <a href="/OnlineShopSWD_Group6/home"><button class="btn btn-default" type="submit">Continue shopping <i class="fa fa-shopping-cart"></i></button></a>
-                <form id="checkoutForm" action="ComfirmOrder" method="POST">
+                <a href="/Project-SWP391-G2-SP25/home"><button class="btn btn-default" type="submit">Continue shopping <i class="fa fa-shopping-cart"></i></button></a>
+                <form id="checkoutForm" action="CartContact" method="POST">
                 <input type="hidden" name="selectedItems" id="selectedItemsInput" />
                 <button class="btn btn-primary" id="checkoutButton">Checkout <i class="fa fa-check"></i></button>
                 </form>
@@ -372,112 +333,104 @@
     </script>
 <script>
     $(document).ready(function() {
-    // Hàm chuyển đổi chuỗi tiền tệ thành số
-    function parseCurrency(currencyString) {
-        return parseFloat(currencyString.replace(/[^0-9]/g, ""));
-    }
+        // Hàm chuyển đổi chuỗi tiền tệ thành số
+        function parseCurrency(currencyString) {
+            return parseFloat(currencyString.replace(/[^0-9]/g, ""));
+        }
 
-    // Hàm định dạng số thành chuỗi tiền tệ Việt Nam
-    function formatCurrency(amount) {
-        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
-    }
-    
-    // Định dạng giá tổng ban đầu
-    $('span[id^="product-total-"]').each(function() {
-        var totalText = $(this).text();
-        var totalPrice = parseFloat(totalText.replace(/[^0-9.-]+/g, ""));
-        $(this).text(formatCurrency(totalPrice));
-    });
+        // Hàm định dạng số thành chuỗi tiền tệ Việt Nam
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+        }
 
-
-    // Hàm cập nhật giá tổng của sản phẩm
-    function updateProductTotal(cartItemId) {
-        var quantity = parseInt($('#product-quantity-' + cartItemId).val());
-        var priceText = $('#product-price-' + cartItemId).text();
-        var price = parseCurrency(priceText);
-        var totalPrice = price * quantity;
-        $('#product-total-' + cartItemId).text(formatCurrency(totalPrice));
-    }
-
-    // Hàm cập nhật tổng giá trị giỏ hàng
-    function updateCartTotal() {
-        var total = 0;
-        $('input[name="selectedItems"]:checked').each(function() {
-            var cartItemId = $(this).val(); // Lấy cartItemID của sản phẩm được checked
-            var totalText = $('#product-total-' + cartItemId).text(); // Lấy giá tổng của sản phẩm
-            var totalPrice = parseCurrency(totalText); // Chuyển đổi giá tổng thành số
-            total += totalPrice; // Cộng dồn vào tổng giá trị giỏ hàng
+        // Định dạng giá tổng ban đầu
+        $('span[id^="product-total-"]').each(function() {
+            var totalText = $(this).text();
+            var totalPrice = parseFloat(totalText.replace(/[^0-9.-]+/g, ""));
+            $(this).text(formatCurrency(totalPrice));
         });
-        $('#cart-total').text(formatCurrency(total)); // Cập nhật tổng giá trị giỏ hàng lên giao diện
-    }
 
-    // Cập nhật tổng giá trị giỏ hàng khi checkbox thay đổi
-    $('input[name="selectedItems"]').on('change', function() {
+        // Hàm cập nhật giá tổng của sản phẩm
+        function updateProductTotal(cartItemId) {
+            var quantity = parseInt($('#product-quantity-' + cartItemId).val());
+            var priceText = $('#product-price-' + cartItemId).text();
+            var price = parseCurrency(priceText);
+            var totalPrice = price * quantity;
+            $('#product-total-' + cartItemId).text(formatCurrency(totalPrice));
+        }
+
+        // Hàm cập nhật tổng giá trị giỏ hàng
+        function updateCartTotal() {
+            var total = 0;
+            $('input[name="selectedItems"]:checked').each(function() {
+                var cartItemId = $(this).val(); // Lấy cartItemID của sản phẩm được checked
+                var totalText = $('#product-total-' + cartItemId).text(); // Lấy giá tổng của sản phẩm
+                var totalPrice = parseCurrency(totalText); // Chuyển đổi giá tổng thành số
+                total += totalPrice; // Cộng dồn vào tổng giá trị giỏ hàng
+                console.log(cartItemId);
+            });
+            $('#cart-total').text(formatCurrency(total)); // Cập nhật tổng giá trị giỏ hàng lên giao diện
+        }
+
+        // Cập nhật tổng giá trị giỏ hàng khi checkbox thay đổi
+        $('input[name="selectedItems"]').on('change', function() {
+            updateCartTotal();
+        });
+
+        // Cập nhật tổng giá trị giỏ hàng ban đầu
         updateCartTotal();
-    });
 
-    // Cập nhật tổng giá trị giỏ hàng ban đầu
-    updateCartTotal();
-
-    // Xử lý nút tăng số lượng
-    $('.btn-increase').on('click', function() {
-        var cartItemId = $(this).data('cart-item-id');
-        var quantityInput = $('#product-quantity-' + cartItemId);
-        var hiddenQuantityInput = $('#product-quantity1-' + cartItemId); // Thẻ ẩn
-        var currentQuantity = parseInt(quantityInput.val());
-        quantityInput.val(currentQuantity + 1);
-        hiddenQuantityInput.val(currentQuantity + 1); // Đồng bộ giá trị thẻ ẩn
-        updateProductTotal(cartItemId);
-        updateCartTotal();
-        updateCartOnServer(cartItemId, currentQuantity + 1); // Gửi giá trị mới đến backend
-    });
-
-    // Xử lý nút giảm số lượng
-    $('.btn-decrease').on('click', function() {
-        var cartItemId = $(this).data('cart-item-id');
-        var quantityInput = $('#product-quantity-' + cartItemId);
-        var hiddenQuantityInput = $('#product-quantity1-' + cartItemId); // Thẻ ẩn
-        var currentQuantity = parseInt(quantityInput.val());
-        if (currentQuantity > 1) {
-            quantityInput.val(currentQuantity - 1);
-            hiddenQuantityInput.val(currentQuantity - 1); // Đồng bộ giá trị thẻ ẩn
+        // Xử lý nút tăng số lượng
+        $('.btn-increase').on('click', function() {
+            var cartItemId = $(this).data('cart-item-id');
+            var quantityInput = $('#product-quantity-' + cartItemId);
+            var hiddenQuantityInput = $('#product-quantity1-' + cartItemId); // Thẻ ẩn
+            var currentQuantity = parseInt(quantityInput.val());
+            quantityInput.val(currentQuantity + 1);
+            hiddenQuantityInput.val(currentQuantity + 1); // Đồng bộ giá trị thẻ ẩn
             updateProductTotal(cartItemId);
             updateCartTotal();
+            updateCartOnServer(cartItemId, currentQuantity + 1); // Gửi giá trị mới đến backend
+        });
+
+        // Xử lý nút giảm số lượng
+        $('.btn-decrease').on('click', function() {
+            var cartItemId = $(this).data('cart-item-id');
+            var quantityInput = $('#product-quantity-' + cartItemId);
+            var hiddenQuantityInput = $('#product-quantity1-' + cartItemId); // Thẻ ẩn
+            var currentQuantity = parseInt(quantityInput.val());
             if (currentQuantity > 1) {
-            quantityInput.val(currentQuantity - 1); // Cập nhật giá trị mới
-            updateCartOnServer(cartItemId, currentQuantity - 1); // Gửi giá trị mới đến backend
+                quantityInput.val(currentQuantity - 1);
+                hiddenQuantityInput.val(currentQuantity - 1); // Đồng bộ giá trị thẻ ẩn
+                updateProductTotal(cartItemId);
+                updateCartTotal();
+                updateCartOnServer(cartItemId, currentQuantity - 1); // Gửi giá trị mới đến backend
             }
+        });
+
+        // Hàm gửi yêu cầu cập nhật giỏ hàng lên server
+        function updateCartOnServer(cartItemId, quantity) {
+            console.log("Sending data to server - cartItemId:", cartItemId, "quantity:", quantity); // Kiểm tra dữ liệu gửi đi
+            $.ajax({
+                url: '<%=request.getContextPath()%>/UpdateCartController',
+                type: 'POST',
+                data: {
+                    cartItemId: cartItemId,
+                    quantity: quantity
+                },
+                success: function(response) {
+                    if (response === "success") {
+                        console.log("Cập nhật giỏ hàng thành công!");
+                    } else {
+                        console.log("Có lỗi xảy ra khi cập nhật giỏ hàng.");
+                    }
+                },
+                error: function() {
+                    console.log("Lỗi kết nối đến server.");
+                }
+            });
         }
     });
-});
-
-
-
-</script>
-
-<script>
-    function updateCartOnServer(cartItemId, quantity) {
-    console.log("Sending data to server - cartItemId:", cartItemId, "quantity:", quantity); // Kiểm tra dữ liệu gửi đi
-    $.ajax({
-        url: '<%=request.getContextPath()%>/UpdateCartController',
-        type: 'POST',
-        data: {
-            cartItemId: cartItemId,
-            quantity: quantity
-        },
-        success: function(response) {
-            if (response === "success") {
-                console.log("Cập nhật giỏ hàng thành công!");
-            } else {
-                console.log("Có lỗi xảy ra khi cập nhật giỏ hàng.");
-            }
-        },
-        error: function() {
-            console.log("Lỗi kết nối đến server.");
-        }
-    });
-}
-
 </script>
     <!-- END PAGE LEVEL JAVASCRIPTS -->
 </body>

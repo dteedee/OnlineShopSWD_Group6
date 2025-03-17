@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
+ */
 package controller;
 
 import dao.*;
@@ -19,9 +23,22 @@ import java.util.List;
 import java.util.Map;
 import org.json.JSONObject;
 
-@WebServlet(name = "ConfirmOrderController", urlPatterns = {"/ConfirmOrder2"})
+/**
+ *
+ * @author admin
+ */
+@WebServlet(name = "ConfirmOrderController", urlPatterns = {"/ConfirmOrder"})
 public class ConfirmOrderController extends HttpServlet {
 
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -39,11 +56,29 @@ public class ConfirmOrderController extends HttpServlet {
         }
     }
 
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -95,11 +130,12 @@ public class ConfirmOrderController extends HttpServlet {
                 JsonObject product = productsArray.get(i).getAsJsonObject();
                 int productId = product.get("productId").getAsInt();
                 int quantity = product.get("quantity").getAsInt();
-                double price = pDAO.getProductByID(productId).getPrice() * quantity;
+                System.out.println(quantity);
+                double price = pDAO.getProductByID(ciDAO.getCartItemByID(productId).getProductID()).getPrice() * quantity;
+                System.out.println(price);
                 total += price;
             }
 
-            if (user != null){
                 // Cập nhật thông tin người dùng
                 user.setFirstName(firstname);
                 user.setLastName(lastname);
@@ -108,10 +144,12 @@ public class ConfirmOrderController extends HttpServlet {
                 user.setGender(gender);
                 user.setAddress(address);
                 uDAO.updateUser(user);
-
+                System.out.println(oDAO.addOrder(new Orders(user.getUserID(), null, user.getAddress(), "Submitted", total, comment)));
                 // Thêm đơn hàng mới
                 boolean isOrderAdded = oDAO.addOrder(new Orders(user.getUserID(), null, user.getAddress(), "Submitted", total, comment));
+                
                 if (!isOrderAdded) {
+                    
                     throw new Exception("Failed to add order.");
                 }
 
@@ -132,8 +170,7 @@ public class ConfirmOrderController extends HttpServlet {
                     }
                     ciDAO.removeCartItem(cartitid);
                 }
-            }
-
+            session.setAttribute("order", latestOrder);
             // Trả về JSON hợp lệ
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");

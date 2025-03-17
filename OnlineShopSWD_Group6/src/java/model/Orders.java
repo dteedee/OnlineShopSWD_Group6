@@ -1,7 +1,14 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package model;
 
+/**
+ *
+ * @author Tùng Dương
+ */
 public class Orders {
-
     private int orderID;
     private int customerID;
     private String orderDate;
@@ -12,6 +19,7 @@ public class Orders {
     private String customerFirstName;
     private String customerLastName;
     private String customerEmail;
+    private int GuestID;
 
     public Orders() {
     }
@@ -39,7 +47,7 @@ public class Orders {
     public void setCustomerEmail(String customerEmail) {
         this.customerEmail = customerEmail;
     }
-
+    
     public Orders(int orderID, int customerID, String orderDate, String deliveryAddress, String status, double totalAmount, String billOfLading, String customerFirstName, String customerLastName, String customerEmail) {
         this.orderID = orderID;
         this.customerID = customerID;
@@ -52,7 +60,7 @@ public class Orders {
         this.customerLastName = customerLastName;
         this.customerEmail = customerEmail;
     }
-
+    
     public Orders(int orderID, int customerID, String orderDate, String deliveryAddress, String status, double totalAmount, String billOfLading) {
         this.orderID = orderID;
         this.customerID = customerID;
@@ -136,12 +144,21 @@ public class Orders {
         this.billOfLading = billOfLading;
     }
 
+    public int getGuestID() {
+        return GuestID;
+    }
+
+    public void setGuestID(int GuestID) {
+        this.GuestID = GuestID;
+    }
+
     public Orders(String orderDate, String deliveryAddress, String status, double totalAmount, String billOfLading, int GuestID) {
         this.orderDate = orderDate;
         this.deliveryAddress = deliveryAddress;
         this.status = status;
         this.totalAmount = totalAmount;
         this.billOfLading = billOfLading;
+        this.GuestID = GuestID;
     }
-
+    
 }

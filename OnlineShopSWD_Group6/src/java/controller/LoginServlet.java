@@ -120,7 +120,7 @@ public class LoginServlet extends HttpServlet {
         java.sql.Connection conn = null;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/OSSDB", "root", "");
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/OSSDB", "root", "1234");
         } catch (Exception e) {
             e.printStackTrace();
         }

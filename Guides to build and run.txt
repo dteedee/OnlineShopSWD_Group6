@@ -1,0 +1,14 @@
+Cách chạy dự án:
+	B1: Chạy database OSSDB bằng MySQL
+	B2: Đổi thông tin user và password trong DBContext và LoginServlet
+	B3: Clean and build
+	B4: Deploy
+	B5: Run project
+==========================================================================
+
+Login System:
+	B1: Ấn đăng nhập ở header
+	B2: Chọn Login with google (Với admin: admin@example.com | pass: 123)
+	B3: Chọn tài khoản muốn đăng nhập
+	B4: Continue
+	B5: Điều hướng về trang HomePage

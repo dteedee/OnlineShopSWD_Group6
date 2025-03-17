@@ -336,32 +336,6 @@ public int getTotalOrders(String search, String fromDate, String toDate, String 
             return false;
         }
     }
-    public int addOrderReturn(Orders order) {
-    String sql = "INSERT INTO Orders (CustomerID, OrderDate, DeliveryAddress, Status, TotalAmount, BillOfLading) VALUES (?, NOW(), ?, ?, ?, ?)";
-    
-    try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-        ps.setInt(1, order.getCustomerID());
-        ps.setString(2, order.getDeliveryAddress());
-        ps.setString(3, order.getStatus());
-        ps.setDouble(4, order.getTotalAmount());
-        ps.setString(5, order.getBillOfLading());
-        
-        int rowsAffected = ps.executeUpdate();
-        if (rowsAffected > 0) {
-            // Lấy ID được tạo tự động
-            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    return generatedKeys.getInt(1);// Giả sử class Orders có phương thức setId
-                }
-            }
-
-        }
-        return -1;
-    } catch (SQLException e) {
-        System.out.println("Error adding order: " + e.getMessage());
-        return -1;
-    }
-}
 
     public boolean updateOrder(Orders order) {
         String sql = "UPDATE Orders SET CustomerID = ?, OrderDate = ?, DeliveryAddress = ?, Status = ?, TotalAmount = ?, BillOfLading = ? WHERE OrderID = ?";
@@ -459,7 +433,6 @@ public int getTotalOrders(String search, String fromDate, String toDate, String 
 
     public static void main(String[] args) {
         OrdersDAO oDAO = new OrdersDAO();
-        Orders order = new Orders(6, null, null, "Pending", 0, null);
-        System.out.println(oDAO.getLatestOrder().getOrderDate());
+        System.out.println(oDAO.addOrder(new Orders(4, null, "Hanoi", "Submitted", 100000, "No comment")));
     }
 }

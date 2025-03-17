@@ -1,12 +1,28 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@page import="dao.*"%>
-<%@page import="model.*"%>
+<%@page import="DAO.*"%>
+<%@page import="Model.*"%>
 <%@page import="java.lang.*"%>
 <%@page import="java.util.*"%>
 <%@page import="java.text.NumberFormat"%>
 <!DOCTYPE html>
+<!--
+Template: Metronic Frontend Freebie - Responsive HTML Template Based On Twitter Bootstrap 3.3.4
+Version: 1.0.0
+Author: KeenThemes
+Website: http://www.keenthemes.com/
+Contact: support@keenthemes.com
+Follow: www.twitter.com/keenthemes
+Like: www.facebook.com/keenthemes
+Purchase Premium Metronic Admin Theme: http://themeforest.net/item/metronic-responsive-admin-dashboard-template/4021469?ref=keenthemes
+-->
+<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
 <html lang="en">
+    <!--<![endif]-->
+
+    <!-- Head BEGIN -->
     <head>
         <meta charset="utf-8">
         <title>Checkout | Metronic Shop UI</title>
@@ -60,7 +76,44 @@
         <link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css" />
         <link rel="stylesheet" href="assets/fonts/fontawesome-free-6.0.0-web/css/all.css" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swapsubset=vietnamese" />
+        <style>
+            
+select {
+    /* Đặt kích thước và padding giống với các input khác */
+    width: 100%;
+    height: 34px; /* Điều chỉnh chiều cao nếu cần */
+    padding: 8px 10px;
+    box-sizing: border-box;
 
+    /* Kiểu dáng nền và viền */
+    border: 1px solid #dbdbdb; /* Viền xám giống các input */
+    color: #777777; /* Chữ màu trắng */
+    font-size: 14px; /* Kích thước chữ giống các input */
+
+    /* Tùy chỉnh giao diện dropdown */
+    appearance: none; /* Xóa giao diện mặc định của trình duyệt */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    /* Thêm mũi tên tùy chỉnh */
+    background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+}
+
+/* Đảm bảo select không bị thay đổi khi focus */
+select:focus {
+    outline: none;
+    border-color: #4a4a4a; /* Giữ viền xám khi focus */
+}
+
+/* Nếu select có placeholder hoặc giá trị mặc định, bạn có thể tùy chỉnh màu */
+select option {
+    background-color: #ffffff; /* Nền của các option */
+    color: #777777; /* Chữ trắng */
+}
+        </style>
     </head>
     <!-- Head END -->
 
@@ -115,7 +168,10 @@
                                             </div>
                                             <div class="form-group">
                                                 <label for="post-code-dd">Giới tính <span class="require">*</span></label>
-                                                <input type="text" id="gender-dd" class="form-control" value="<%= (user != null) ? user.getGender() : "" %>">
+                                                <select id="gender-dd" name="gender">
+                                                    <option value="Male" <%= "Male".equals(user.getGender()) ? "selected" : "" %>>Nam</option>
+                                                    <option value="Female" <%= "Female".equals(user.getGender()) ? "selected" : "" %>>Nữ</option>
+                                                </select>
                                             </div>
                                             <div class="form-group">
                                                 <label for="telephone-dd">Telephone <span class="require">*</span></label>
@@ -145,12 +201,15 @@
                                             <p>Please select the preferred payment method to use on this order.</p>
                                             <div class="radio-list">
                                                 <label>
-                                                    <input type="radio" name="CashOnDelivery" value="CashOnDelivery" id="payment-dd"> Cash On Delivery
+                                                    <input type="radio" name="paymentMethod" value="CashOnDelivery" id="cash-on-delivery"> Cash On Delivery
+                                                </label>
+                                                <label>
+                                                    <input type="radio" name="paymentMethod" value="VNpay" id="vnpay"> VNPay
                                                 </label>
                                             </div>
                                             <div class="form-group">
                                                 <label for="delivery-payment-method">Add Comments About Your Order</label>
-                                                <textarea id="delivery-payment-method" rows="8" class="form-control" id="comment-dd"></textarea>
+                                                <textarea id="comment-dd" rows="8" class="form-control" id="comment-dd"></textarea>
                                             </div>
                                             <button class="btn btn-primary  pull-right" type="submit" id="button-payment-method" data-toggle="collapse" data-parent="#checkout-page" data-target="#confirm-content">Continue</button>
                                             <div class="checkbox pull-right">
@@ -195,10 +254,11 @@
                                                             NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
                                                             if (list != null) {
                                                                 for(int id : list.keySet()){
-                                                                Products p = pDAO.getProductByID(id);
+                                                                CartItems ci = ciDAO.getCartItemByID(id);
+                                                                Products p = pDAO.getProductByID(ci.getProductID());
                                                                 int quantity = list.get(id);
                                                                 // Tính tổng giá tiền
-                                                                double totalPrice = p.getPrice() * quantity;
+                                                                double totalPrice = p.getPrice() * ci.getQuantity();
                                                                 String formattedTotalPrice = currencyFormat.format(totalPrice);
                                                     %>
                                                     <tr>
@@ -211,8 +271,8 @@
                                                             <em><%=p.getDescription()%></em>
                                                         </td>
                                                         <td class="checkout-model"><%=p.getDescription()%></td>
-                                                        <td class="checkout-quantity"><%=quantity%>
-                                                            <input type="number" class="product-quantity" data-product-id="<%=id%>" value="<%=quantity%>" min="1" readonly hidden>
+                                                        <td class="checkout-quantity"><%=ci.getQuantity()%>
+                                                            <input type="number" class="product-quantity" data-product-id="<%=id%>" value="<%=ci.getQuantity()%>" min="1" readonly hidden>
                                                         </td>
                                                         <td class="checkout-price"><strong><%=p.getPriceFormat()%></strong></td>
                                                         <td class="checkout-total"><strong><%=formattedTotalPrice%></strong></td>
@@ -229,25 +289,9 @@
                                             </div>
                                             <div class="checkout-total-block">
                                                 <ul>
-                                                    <li>
-                                                        <em>Sub total</em>
-                                                        <strong class="price"><span>$</span>47.00</strong>
-                                                    </li>
-                                                    <li>
-                                                        <em>Shipping cost</em>
-                                                        <strong class="price"><span>$</span>3.00</strong>
-                                                    </li>
-                                                    <li>
-                                                        <em>Eco Tax (-2.00)</em>
-                                                        <strong class="price"><span>$</span>3.00</strong>
-                                                    </li>
-                                                    <li>
-                                                        <em>VAT (17.5%)</em>
-                                                        <strong class="price"><span>$</span>3.00</strong>
-                                                    </li>
                                                     <li class="checkout-total-price">
-                                                        <em>Total</em>
-                                                        <strong class="price"><span>$</span>56.00</strong>
+                                                        <em>Tổng giá trị đơn hàng</em>
+                                                        <strong class="price" id="total-price"></strong>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -314,63 +358,70 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     $(document).ready(function() {
-        // Xử lý sự kiện khi nhấn nút "Confirm Order"
-        $('#button-confirm').on('click', function() {
-            // Thu thập dữ liệu từ form
-            var firstname = $('#firstname-dd').val();
-            var lastname = $('#lastname-dd').val();
-            var email = $('#email-dd').val();
-            var phone = $('#phone-dd').val();
-            var gender = $('#gender-dd').val();
-            var address = $('#address-dd').val();
-            var comment = $('#comment-dd').val();
-            var paymentMethod = $('input[name="CashOnDelivery"]:checked').val();
+    $('#button-confirm').on('click', function() {
+        var paymentMethod = $('input[name="paymentMethod"]:checked').val();
+        
+        var firstname = $('#firstname-dd').val();
+        var lastname = $('#lastname-dd').val();
+        var email = $('#email-dd').val();
+        var phone = $('#phone-dd').val();
+        var gender = $('#gender-dd').val();
+        var address = $('#address-dd').val();
+        var comment = $('#comment-dd').val();
 
-            // Thu thập thông tin sản phẩm từ bảng
-            var products = [];
-            $('table tr').each(function() {
-                var productId = $(this).find('.product-quantity').data('product-id');
-                var quantity = $(this).find('.product-quantity').val();
-                if (productId && quantity) {
-                    products.push({
-                        productId: parseInt(productId), // Chuyển sang số
-                        quantity: parseInt(quantity)   // Chuyển sang số
+        var products = [];
+        $('table tr').each(function() {
+            var productId = $(this).find('.product-quantity').data('product-id');
+            var quantity = $(this).find('.product-quantity').val();
+            if (productId && quantity) {
+                products.push({
+                    productId: parseInt(productId),
+                    quantity: parseInt(quantity)
+                });
+            }
+        });
+        
+        var data = {
+            firstname: firstname,
+            lastname: lastname,
+            email: email,
+            phone: phone,
+            gender: gender,
+            address: address,
+            comment: comment,
+            paymentMethod: paymentMethod,
+            products: products
+        };
+
+        console.log(JSON.stringify(data));
+
+        $.ajax({
+            url: '<%=request.getContextPath()%>/ConfirmOrder',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function(response) {
+                console.log(response);
+                if (paymentMethod === 'VNpay') {
+                    // Tạo form ẩn để POST sang /payment
+                    var form = $('<form/>', {
+                        action: '<%=request.getContextPath()%>/payment',
+                        method: 'POST',
+                        style: 'display: none'
                     });
-                }
-            });
-            
-            // Tạo đối tượng dữ liệu để gửi đi
-            var data = {
-                firstname: firstname,
-                lastname: lastname,
-                email: email,
-                phone: phone,
-                gender: gender,
-                address: address,
-                comment: comment,
-                paymentMethod: paymentMethod,
-                products: products
-            };
-
-            // Gửi dữ liệu bằng AJAX
-            console.log(JSON.stringify(data)); // Kiểm tra dữ liệu trước khi gửi
-
-            $.ajax({
-                url: '<%=request.getContextPath()%>/ConfirmOrder',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(data),
-                success: function(response) {
-                    console.log(response); // In phản hồi từ server
+                    $('body').append(form);
+                    form.submit();
+                } else if (paymentMethod === 'CashOnDelivery') {
                     window.location.href = '<%=request.getContextPath()%>/CartCompletion';
-                },
-                error: function(xhr, status, error) {
-                    console.error(error); // In lỗi chi tiết
-                    alert('An error occurred while processing your request: ' + error);
                 }
-            });
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+                alert('An error occurred while processing your request: ' + error);
+            }
         });
     });
+});
 </script>
 
         <!-- END PAGE LEVEL JAVASCRIPTS -->
