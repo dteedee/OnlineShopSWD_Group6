@@ -62,6 +62,8 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swapsubset=vietnamese" />
         <script src="https://cdn.tailwindcss.com">
         </script>
+
+
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
     </head>
     <!-- Head END -->
@@ -108,7 +110,7 @@
 
                                     <label for="email" class="font-bold mt-2">Email</label>
                                     <input type="email" id="email" name="email" class="border p-2 w-full mt-1" required>
-                                    
+
                                     <label for="paymentMethod" class="font-bold mt-2">Phương thức thanh toán</label>
                                     <select id="paymentMethod" name="paymentMethod" class="border p-2 w-full mt-1" required>
                                         <option value="COD">Thanh toán khi nhận hàng (COD)</option>
@@ -135,11 +137,11 @@
                                     %>
                                     <input type="hidden" id="shippingFeeInput" name="shippingFee" value="0">
                                 </div>
-                                    <div class="text-right">
-                                        
-                                        <button id="button-confirm" type="submit" class="button-confirm bg-red-500 text-white px-6 py-2 rounded-full">Xác nhận đơn hàng</button>
-                                    </div>
-                                       </form>
+                                <div class="text-right">
+
+                                    <button id="button-confirm" type="submit" class="button-confirm bg-red-500 text-white px-6 py-2 rounded-full">Xác nhận đơn hàng</button>
+                                </div>
+                            </form>
                         </div>
                         <div class="md:w-1/2 mt-6 md:mt-0">
                             <div class="bg-gray-100 p-6 rounded-lg shadow-lg">
@@ -220,8 +222,25 @@
                 <!-- END SIDEBAR & CONTENT -->
             </div>
         </div>
+                          
         <%@ include file="./Public/footer.jsp" %>
-
+        <!-- Modal -->
+<div id="bankTransferQrModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center hidden w-full">
+    <div class="bg-white p-6 rounded-lg w-96">
+        <div class="flex justify-between items-center">
+            <h5 class="text-xl font-semibold">Thanh toán qua chuyển khoản</h5>
+            <button id="closeModal" class="text-gray-500 hover:text-gray-700">&times;</button>
+        </div>
+        <div class="mt-4 text-center">
+            <p>Vui lòng quét mã QR bên dưới để thanh toán:</p>
+            <img id="bankTransferQrImage" src="" alt="QR Code Thanh Toán" class="img-fluid max-w-full mt-4">
+            <p class="mt-3">Sau khi chuyển khoản, đơn hàng sẽ được xử lý khi chúng tôi xác nhận thanh toán.</p>
+        </div>
+        <div class="mt-4 flex justify-end">
+            <button id="closeModalFooter" class="bg-gray-500 text-white py-2 px-4 rounded-lg">Đóng</button>
+        </div>
+    </div>
+</div>
         <!-- Load javascripts at bottom, this will reduce page load time -->
         <!-- BEGIN CORE PLUGINS(REQUIRED FOR ALL PAGES) -->
         <!--[if lt IE 9]>
@@ -270,6 +289,7 @@
             document.addEventListener("DOMContentLoaded", function () {
                 loadProvinces();
             });
+            // Hàm mở modal
 
             function loadProvinces() {
                 fetch("LocationServlet?action=provinces", {method: "POST"})
@@ -334,18 +354,59 @@
                         })
                         .catch(error => console.error("Lỗi khi lấy danh sách phường/xã:", error));
             });
-
+            
             document.addEventListener("DOMContentLoaded", function () {
-                document.getElementById("paymentMethod").addEventListener("change", function () {
-                    let paymentMethod = this.options[this.selectedIndex].text;
 
-                    // Cập nhật phần tóm tắt đơn hàng với phương thức thanh toán đã chọn
-                    let paymentMethodSummary = document.getElementById("paymentMethodSummary");
-                    if (paymentMethod) {
-                        paymentMethodSummary.textContent = paymentMethod;  // Hiển thị phương thức thanh toán
+                // Đặt tên biến với tiền tố cụ thể
+                const paymentMethodDropdown = document.getElementById("paymentMethod");
+                const paymentSummaryElement = document.getElementById("paymentMethodSummary");
+                const qrImageElement = document.getElementById("bankTransferQrImage");
+                const modal = document.getElementById('bankTransferQrModal');
+                function openModal() {
+                modal.classList.remove('hidden');
+              }
+
+              // Hàm đóng modal
+              function closeModal() {
+                modal.classList.add('hidden');
+                paymentMethodDropdown.selectedIndex = 0; // Cập nhật về giá trị mặc định (thường là chỉ số 0)
+                paymentMethodDropdown.dispatchEvent(new Event("change"));
+              }
+
+                // Sự kiện thay đổi phương thức thanh toán
+                paymentMethodDropdown.addEventListener("change", function () {
+                    const selectedPaymentMethod = this.value;
+                    const paymentMethodText = this.options[this.selectedIndex].text;
+                    paymentSummaryElement.textContent = paymentMethodText;
+
+                    // Thông tin ngân hàng với hậu tố cụ thể
+                    const bankIdentifier = "970436"; // Thay bằng mã ngân hàng thực tế
+                    const bankAccountNumber = "1018686519"; // Thay bằng số tài khoản thực tế
+                    const bankAccountHolder = "Nguyen Thanh Trung"; // Thay bằng tên tài khoản thực tế
+                    const qrTemplateType = "print";
+
+                    // Tính tổng giá trị đơn hàng
+                    const totalPriceDisplay = document.getElementById("totalPrice").textContent.trim();
+                    const orderTotalAmount = parseFloat(totalPriceDisplay.replace(/[^\d]/g, ''));
+                    const paymentDescription = encodeURIComponent("Thanh toan don hang " + new Date().getTime());
+
+                                        // Kiểm tra phương thức thanh toán và cập nhật URL QR
+                    if (selectedPaymentMethod === "BankTransfer") {
+                      console.log("da tao qr");
+                      const qrImageUrl = `https://img.vietqr.io/image/\${bankIdentifier}-\${bankAccountNumber}-\${qrTemplateType}.png?amount=\${orderTotalAmount}&addInfo=\${paymentDescription}&accountName=\${encodeURIComponent(bankAccountHolder)}`;
+                      qrImageElement.src = qrImageUrl;
+
+                      // Hiển thị modal
+                      openModal();
                     } else {
-                        paymentMethodSummary.textContent = "Thanh toán khi nhận hàng (COD)";  // Mặc định nếu không có phương thức thanh toán
+                      // Ẩn modal nếu không phải BankTransfer
+                      closeModal();
                     }
+
+                });
+                const closeModalButtons = document.querySelectorAll('#closeModal, #closeModalFooter');
+                closeModalButtons.forEach(button => {
+                    button.addEventListener('click', closeModal);
                 });
                 let wardSelect = document.getElementById("ward");
                 wardSelect.addEventListener("change", function () {
@@ -444,19 +505,19 @@
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(data),
-        success: function (response) {
-            console.log("Response from server:", response);
-            let resp = JSON.parse(response)
-            if (resp.paymentUrl) {
-                window.location.href = resp.paymentUrl; // Điều hướng tới VNPAY
-            } else {
-                alert("Đã xảy ra lỗi khi tạo đơn hàng.");
-            }
-        },
-        error: function (xhr, status, error) {
-            console.error("Error:", error);
-            alert("Có lỗi xảy ra, vui lòng thử lại!");
-        }
+                    success: function (response) {
+                        console.log("Response from server:", response);
+                        let resp = JSON.parse(response)
+                        if (resp.paymentUrl) {
+                            window.location.href = resp.paymentUrl; // Điều hướng tới VNPAY
+                        } else {
+                            alert("Đã xảy ra lỗi khi tạo đơn hàng.");
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error:", error);
+                        alert("Có lỗi xảy ra, vui lòng thử lại!");
+                    }
                 });
             });
         </script>
