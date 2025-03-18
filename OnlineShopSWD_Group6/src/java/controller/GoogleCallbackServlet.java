@@ -1,6 +1,7 @@
 package controller;
 
 import com.google.gson.Gson;
+import dao.CartsDAO;
 import dao.UsersDAO;
 import model.Users;
 import jakarta.servlet.ServletException;
@@ -16,6 +17,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import model.Carts;
 
 @WebServlet(name = "GoogleCallbackServlet", urlPatterns = {"/GoogleCallbackServlet"})
 public class GoogleCallbackServlet extends HttpServlet {
@@ -81,6 +83,8 @@ public class GoogleCallbackServlet extends HttpServlet {
             boolean added = userDAO.addUser(user);
             if (added) {
                 user = userDAO.getUserByEmail(userInfo.getEmail()); // Fetch the newly created user
+                CartsDAO cartsDAO = new CartsDAO();
+                cartsDAO.addCart(new Carts(user.getUserID(), "Normal"));
                 session.setAttribute("username", user.getUserName());
                 session.setAttribute("email", user.getEmail());
                 session.setAttribute("role", user.getRole());

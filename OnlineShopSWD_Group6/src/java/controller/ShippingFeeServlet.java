@@ -53,7 +53,7 @@ public class ShippingFeeServlet extends HttpServlet {
         requestBody.put("to_ward_code", toWardCode);
         requestBody.put("from_district_id ", 13005);
         requestBody.put("to_district_id", Integer.parseInt(toDistrictId));
-        requestBody.put("weight", 100);
+        requestBody.put("weight", 10000);
         requestBody.put("service_type_id", 2);
         // Gửi request đến API GHN
         try {
@@ -79,6 +79,7 @@ public class ShippingFeeServlet extends HttpServlet {
                     while ((responseLine = br.readLine()) != null) {
                         responseText.append(responseLine.trim());
                     }
+                    System.out.println("API: " + responseText.toString());
                     response.getWriter().write(responseText.toString());
                 }
             } else {

@@ -124,9 +124,9 @@
                                         if (list != null) {
                                             int index = 0;
                                             for (int id : list.keySet()) {
-                                            CartItems ci = ciDAO.getCartItemByID(id);
-                                            Products p = pDAO.getProductByID(ci.getProductID());
-                                            int quantity = list.get(id);
+                                                CartItems ci = ciDAO.getCartItemByID(id);
+                                                Products p = pDAO.getProductByID(ci.getProductID());
+                                                int quantity = list.get(id);
                                     %>
                                     <input type="hidden" name="productIds[<%=index%>]" value="<%=id%>">
                                     <input type="hidden" name="quantities[<%=index%>]" value="<%=quantity%>">
@@ -158,7 +158,6 @@
                                 </div>
                                 <%                                        // Lấy danh sách các sản phẩm đã chọn từ session
 
-                                    
                                     double sum = 0;
                                     // Lấy đối tượng NumberFormat cho định dạng tiền Việt Nam
                                     NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
@@ -222,25 +221,25 @@
                 <!-- END SIDEBAR & CONTENT -->
             </div>
         </div>
-                          
+
         <%@ include file="./Public/footer.jsp" %>
         <!-- Modal -->
-<div id="bankTransferQrModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center hidden w-full">
-    <div class="bg-white p-6 rounded-lg w-96">
-        <div class="flex justify-between items-center">
-            <h5 class="text-xl font-semibold">Thanh toán qua chuyển khoản</h5>
-            <button id="closeModal" class="text-gray-500 hover:text-gray-700">&times;</button>
+        <div id="bankTransferQrModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center hidden w-full">
+            <div class="bg-white p-6 rounded-lg w-96">
+                <div class="flex justify-between items-center">
+                    <h5 class="text-xl font-semibold">Thanh toán qua chuyển khoản</h5>
+                    <button id="closeModal" class="text-gray-500 hover:text-gray-700">&times;</button>
+                </div>
+                <div class="mt-4 text-center">
+                    <p>Vui lòng quét mã QR bên dưới để thanh toán:</p>
+                    <img id="bankTransferQrImage" src="" alt="QR Code Thanh Toán" class="img-fluid max-w-full mt-4">
+                    <p class="mt-3">Sau khi chuyển khoản, đơn hàng sẽ được xử lý khi chúng tôi xác nhận thanh toán.</p>
+                </div>
+                <div class="mt-4 flex justify-end">
+                    <button id="closeModalFooter" class="bg-gray-500 text-white py-2 px-4 rounded-lg">Đóng</button>
+                </div>
+            </div>
         </div>
-        <div class="mt-4 text-center">
-            <p>Vui lòng quét mã QR bên dưới để thanh toán:</p>
-            <img id="bankTransferQrImage" src="" alt="QR Code Thanh Toán" class="img-fluid max-w-full mt-4">
-            <p class="mt-3">Sau khi chuyển khoản, đơn hàng sẽ được xử lý khi chúng tôi xác nhận thanh toán.</p>
-        </div>
-        <div class="mt-4 flex justify-end">
-            <button id="closeModalFooter" class="bg-gray-500 text-white py-2 px-4 rounded-lg">Đóng</button>
-        </div>
-    </div>
-</div>
         <!-- Load javascripts at bottom, this will reduce page load time -->
         <!-- BEGIN CORE PLUGINS(REQUIRED FOR ALL PAGES) -->
         <!--[if lt IE 9]>
@@ -354,7 +353,7 @@
                         })
                         .catch(error => console.error("Lỗi khi lấy danh sách phường/xã:", error));
             });
-            
+
             document.addEventListener("DOMContentLoaded", function () {
 
                 // Đặt tên biến với tiền tố cụ thể
@@ -363,15 +362,15 @@
                 const qrImageElement = document.getElementById("bankTransferQrImage");
                 const modal = document.getElementById('bankTransferQrModal');
                 function openModal() {
-                modal.classList.remove('hidden');
-              }
+                    modal.classList.remove('hidden');
+                }
 
-              // Hàm đóng modal
-              function closeModal() {
-                modal.classList.add('hidden');
-                paymentMethodDropdown.selectedIndex = 0; // Cập nhật về giá trị mặc định (thường là chỉ số 0)
-                paymentMethodDropdown.dispatchEvent(new Event("change"));
-              }
+                // Hàm đóng modal
+                function closeModal() {
+                    modal.classList.add('hidden');
+                    paymentMethodDropdown.selectedIndex = 0; // Cập nhật về giá trị mặc định (thường là chỉ số 0)
+                    paymentMethodDropdown.dispatchEvent(new Event("change"));
+                }
 
                 // Sự kiện thay đổi phương thức thanh toán
                 paymentMethodDropdown.addEventListener("change", function () {
@@ -390,17 +389,18 @@
                     const orderTotalAmount = parseFloat(totalPriceDisplay.replace(/[^\d]/g, ''));
                     const paymentDescription = encodeURIComponent("Thanh toan don hang " + new Date().getTime());
 
-                                        // Kiểm tra phương thức thanh toán và cập nhật URL QR
+                    // Kiểm tra phương thức thanh toán và cập nhật URL QR
                     if (selectedPaymentMethod === "BankTransfer") {
-                      console.log("da tao qr");
-                      const qrImageUrl = `https://img.vietqr.io/image/\${bankIdentifier}-\${bankAccountNumber}-\${qrTemplateType}.png?amount=\${orderTotalAmount}&addInfo=\${paymentDescription}&accountName=\${encodeURIComponent(bankAccountHolder)}`;
-                      qrImageElement.src = qrImageUrl;
+                        console.log("da tao qr");
+                        const qrImageUrl = `https://img.vietqr.io/image/\${bankIdentifier}-\${bankAccountNumber}-\${qrTemplateType}.png?amount=\${orderTotalAmount}&addInfo=\${paymentDescription}&accountName=\${encodeURIComponent(bankAccountHolder)}`;
+                        qrImageElement.src = qrImageUrl;
 
-                      // Hiển thị modal
-                      openModal();
+                        // Hiển thị modal
+                        openModal();
                     } else {
-                      // Ẩn modal nếu không phải BankTransfer
-                      closeModal();
+                       if (!modal.classList.contains('hidden')) {
+                            closeModal();
+                        }
                     }
 
                 });
