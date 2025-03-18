@@ -109,7 +109,7 @@
                                     <input type="text" id="phone" name="phone" class="border p-2 w-full mt-1" required>
 
                                     <label for="email" class="font-bold mt-2">Email</label>
-                                    <input type="email" id="email" name="email" class="border p-2 w-full mt-1" required>
+                                    <input type="email" id="email" name="email" class="border p-2 w-full mt-1" value="${sessionScope.user.email}" required>
 
                                     <label for="paymentMethod" class="font-bold mt-2">Phương thức thanh toán</label>
                                     <select id="paymentMethod" name="paymentMethod" class="border p-2 w-full mt-1" required>
