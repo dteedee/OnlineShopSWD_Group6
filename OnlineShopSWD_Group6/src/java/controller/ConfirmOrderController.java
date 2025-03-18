@@ -27,7 +27,7 @@ import org.json.JSONObject;
  *
  * @author admin
  */
-@WebServlet(name = "ConfirmOrderController", urlPatterns = {"/ConfirmOrder"})
+@WebServlet(name = "ConfirmOrderController", urlPatterns = {"/ConfirmOrder2"})
 public class ConfirmOrderController extends HttpServlet {
 
     /**

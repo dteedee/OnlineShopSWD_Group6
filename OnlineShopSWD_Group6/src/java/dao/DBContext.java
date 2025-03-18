@@ -13,7 +13,7 @@ public class DBContext {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             conn = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/OSSDB", "root", "1234");
+                    "jdbc:mysql://localhost:3306/OSSDB", "root", "");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -24,7 +24,7 @@ public class DBContext {
     public DBContext() {
         try {
             String user = "root";
-            String pass = "1234";
+            String pass = "";
             String url = "jdbc:mysql://localhost:3306/OSSDB";
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection(url, user, pass);

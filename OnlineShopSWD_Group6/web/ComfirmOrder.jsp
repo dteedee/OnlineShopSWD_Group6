@@ -108,14 +108,23 @@
 
                                     <label for="email" class="font-bold mt-2">Email</label>
                                     <input type="email" id="email" name="email" class="border p-2 w-full mt-1" required>
-
+                                    
+                                    <label for="paymentMethod" class="font-bold mt-2">Phương thức thanh toán</label>
+                                    <select id="paymentMethod" name="paymentMethod" class="border p-2 w-full mt-1" required>
+                                        <option value="COD">Thanh toán khi nhận hàng (COD)</option>
+                                        <option value="OnlinePayment">Thanh toán trực tuyến</option>
+                                        <option value="BankTransfer">Chuyển khoản ngân hàng</option>
+                                    </select>
                                     <!-- Thêm input ẩn cho sản phẩm và phí vận chuyển -->
-                                    <%                        ProductsDAO pDAO = new ProductsDAO();
+                                    <%  CartItemsDAO ciDAO = new CartItemsDAO();
+                                        ProductsDAO pDAO = new ProductsDAO();
                                         Map<Integer, Integer> list = (Map<Integer, Integer>) request.getAttribute("list");
                                         if (list != null) {
                                             int index = 0;
                                             for (int id : list.keySet()) {
-                                                int quantity = list.get(id);
+                                            CartItems ci = ciDAO.getCartItemByID(id);
+                                            Products p = pDAO.getProductByID(ci.getProductID());
+                                            int quantity = list.get(id);
                                     %>
                                     <input type="hidden" name="productIds[<%=index%>]" value="<%=id%>">
                                     <input type="hidden" name="quantities[<%=index%>]" value="<%=quantity%>">
@@ -126,30 +135,38 @@
                                     %>
                                     <input type="hidden" id="shippingFeeInput" name="shippingFee" value="0">
                                 </div>
-                                <button id="button-confirm" type="submit" class="button-confirm bg-red-500 text-white px-6 py-2 rounded-full">Tạo đơn hàng</button>
-                            </form>
+                                    <div class="text-right">
+                                        
+                                        <button id="button-confirm" type="submit" class="button-confirm bg-red-500 text-white px-6 py-2 rounded-full">Xác nhận đơn hàng</button>
+                                    </div>
+                                       </form>
                         </div>
                         <div class="md:w-1/2 mt-6 md:mt-0">
                             <div class="bg-gray-100 p-6 rounded-lg shadow-lg">
                                 <h2 class="text-xl font-bold mb-4">Tóm tắt đơn hàng</h2>
                                 <div class="flex justify-between mb-4">
-                                    <div>
+                                    <div class="text-left">
                                         <p class="text-sm text-gray-600">Ngày đặt hàng</p>
                                         <p class="font-bold" id="orderDate"></p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-sm text-gray-600">Phương thức thanh toán</p>
+                                        <p class="font-bold" id="paymentMethodSummary">Thanh toán khi nhận hàng (COD)</p>
                                     </div>
                                 </div>
                                 <%                                        // Lấy danh sách các sản phẩm đã chọn từ session
 
-                                    CartItemsDAO ciDAO = new CartItemsDAO();
+                                    
                                     double sum = 0;
                                     // Lấy đối tượng NumberFormat cho định dạng tiền Việt Nam
                                     NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
                                     if (list != null) {
                                         for (int id : list.keySet()) {
-                                            Products p = pDAO.getProductByID(id);
+                                            CartItems ci = ciDAO.getCartItemByID(id);
+                                            Products p = pDAO.getProductByID(ci.getProductID());
                                             int quantity = list.get(id);
                                             // Tính tổng giá tiền
-                                            double totalPrice = p.getPrice() * quantity;
+                                            double totalPrice = p.getPrice() * ci.getQuantity();
                                             sum += totalPrice;
                                             String formattedTotalPrice = currencyFormat.format(totalPrice);
                                 %>
@@ -163,13 +180,13 @@
                                             Price: <%=p.getPriceFormat()%>
                                         </p>
                                         <p class="text-sm text-gray-600">
-                                            Qty: <%=quantity%>
+                                            Qty: <%=ci.getQuantity()%>
                                         </p>
                                     </div>
                                     <p class="font-bold">
                                         <%=formattedTotalPrice%>
                                     </p>
-                                    <input type="number" class="product-quantity" data-product-id="<%=id%>" value="<%=quantity%>" min="1" readonly hidden>
+                                    <input type="number" class="product-quantity" data-product-id="<%=id%>" value="<%=ci.getQuantity()%>" min="1" readonly hidden>
                                 </div>
                                 <%
                                     }
@@ -319,6 +336,17 @@
             });
 
             document.addEventListener("DOMContentLoaded", function () {
+                document.getElementById("paymentMethod").addEventListener("change", function () {
+                    let paymentMethod = this.options[this.selectedIndex].text;
+
+                    // Cập nhật phần tóm tắt đơn hàng với phương thức thanh toán đã chọn
+                    let paymentMethodSummary = document.getElementById("paymentMethodSummary");
+                    if (paymentMethod) {
+                        paymentMethodSummary.textContent = paymentMethod;  // Hiển thị phương thức thanh toán
+                    } else {
+                        paymentMethodSummary.textContent = "Thanh toán khi nhận hàng (COD)";  // Mặc định nếu không có phương thức thanh toán
+                    }
+                });
                 let wardSelect = document.getElementById("ward");
                 wardSelect.addEventListener("change", function () {
                     let toWardCode = this.value;
@@ -374,7 +402,7 @@
                 var email = $('#email').val();
                 var phone = $('#phone').val();
                 let fullAddress = `\${ward}, \${district}, \${province}`;
-
+                var paymentMethod = document.getElementById("paymentMethod").value;
                 let totalPriceText = document.getElementById("totalPrice").textContent.trim();
                 let totalPrice = parseFloat(totalPriceText.replace(/[^\d]/g, '')); // Loại bỏ ký tự không phải số
 
@@ -404,7 +432,8 @@
                     phone: phone,
                     fullAddress: fullAddress,
                     products: products,
-                    totalPrice: totalPrice
+                    totalPrice: totalPrice,
+                    paymentMethod: paymentMethod
                 };
 
                 // Gửi dữ liệu bằng AJAX
@@ -415,14 +444,19 @@
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(data),
-                    success: function (response) {
-                        console.log(response); // In phản hồi từ server
-                        
-                    },
-                    error: function (xhr, status, error) {
-                        console.error(error); // In lỗi chi tiết
-                        alert('An error occurred while processing your request: ' + error);
-                    }
+        success: function (response) {
+            console.log("Response from server:", response);
+            let resp = JSON.parse(response)
+            if (resp.paymentUrl) {
+                window.location.href = resp.paymentUrl; // Điều hướng tới VNPAY
+            } else {
+                alert("Đã xảy ra lỗi khi tạo đơn hàng.");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            alert("Có lỗi xảy ra, vui lòng thử lại!");
+        }
                 });
             });
         </script>

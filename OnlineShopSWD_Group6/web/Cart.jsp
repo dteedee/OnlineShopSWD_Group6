@@ -157,7 +157,7 @@
                 </div>
               </div>
                 <a href="/Project-SWP391-G2-SP25/home"><button class="btn btn-default" type="submit">Continue shopping <i class="fa fa-shopping-cart"></i></button></a>
-                <form id="checkoutForm" action="CartContact" method="POST">
+                <form id="checkoutForm" action="ConfirmOrder" method="POST">
                 <input type="hidden" name="selectedItems" id="selectedItemsInput" />
                 <button class="btn btn-primary" id="checkoutButton">Checkout <i class="fa fa-check"></i></button>
                 </form>
