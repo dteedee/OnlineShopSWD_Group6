@@ -116,7 +116,7 @@
                         <input type="checkbox" name="selectedItems" value="<%=ci.getCartItemID()%>" checked />
                     </td>
                     <td class="goods-page-image">
-                        <a href="/Project-SWP391-G2-SP25/ProductDetailController?id=<%=p.getProductID()%>"><img src="<%=p.getImageLink()%>"></a>
+                        <a href="/OnlineShopSWD_Group6/ProductDetailController?id=<%=p.getProductID()%>"><img src="<%=p.getImageLink()%>"></a>
                     </td>
                     <td class="goods-page-description">
                       <h3><a href="javascript:;">Cool green dress with red bell</a></h3>
@@ -156,7 +156,7 @@
                     </ul>
                 </div>
               </div>
-                <a href="/Project-SWP391-G2-SP25/home"><button class="btn btn-default" type="submit">Continue shopping <i class="fa fa-shopping-cart"></i></button></a>
+                <a href="/OnlineShopSWD_Group6/home"><button class="btn btn-default" type="submit">Continue shopping <i class="fa fa-shopping-cart"></i></button></a>
                 <form id="checkoutForm" action="ConfirmOrder" method="POST">
                 <input type="hidden" name="selectedItems" id="selectedItemsInput" />
                 <button class="btn btn-primary" id="checkoutButton">Checkout <i class="fa fa-check"></i></button>
