@@ -148,6 +148,14 @@
                             </a>
                         </li>
                         <li class="header__cart-items">
+                            <a href="/OnlineShopSWD_Group6/OrderTrackingController" class="header__cart-link">
+                                <div class="icon">
+                                    <i class="fa-solid fa-badge-check"></i>
+                                </div>
+                                Kiểm tra đơn
+                            </a>
+                        </li>
+                        <li class="header__cart-items">
                             <a href="#" class="header__cart-link">
                                 <div class="icon">
                                     <i class="icon-i fa-solid fa-phone"></i>
