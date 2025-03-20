@@ -20,6 +20,7 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import java.io.InputStream;
 import java.util.Map;
+import service.CloudinaryService;
 
 @WebServlet(name = "ProductManagementController", urlPatterns = {"/admin/product-management"})
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, // 1MB
@@ -29,33 +30,34 @@ public class ProductManagementController extends HttpServlet {
 
     private UsersDAO userDAO = new UsersDAO();
     private ProductsDAO productDAO = new ProductsDAO();
-    private Cloudinary cloudinary;
+    private CloudinaryService cloudinaryService;
 
     @Override
     public void init() throws ServletException {
         super.init();
+        cloudinaryService = new CloudinaryService();
         // Không khởi tạo Cloudinary ở đây để tránh làm hỏng servlet
         // Khởi tạo sẽ được thực hiện khi cần (lazy initialization)
     }
 
-    private void initializeCloudinary() throws ServletException {
-        if (cloudinary == null) {
-            synchronized (this) {
-                if (cloudinary == null) {
-                    try {
-                        cloudinary = new Cloudinary(ObjectUtils.asMap(
-                                "cloud_name", "dzutsz5ym",
-                                "api_key", "717311866718988",
-                                "api_secret", "Bgrn_HbsmA6Vv7x4CWq_JZmGnpo",
-                                "secure", "true"
-                        ));
-                    } catch (Exception e) {
-                        throw new ServletException("Không thể khởi tạo Cloudinary: " + e.getMessage(), e);
-                    }
-                }
-            }
-        }
-    }
+//    private void initializeCloudinary() throws ServletException {
+//        if (cloudinary == null) {
+//            synchronized (this) {
+//                if (cloudinary == null) {
+//                    try {
+//                        cloudinary = new Cloudinary(ObjectUtils.asMap(
+//                                "cloud_name", "dzutsz5ym",
+//                                "api_key", "717311866718988",
+//                                "api_secret", "Bgrn_HbsmA6Vv7x4CWq_JZmGnpo",
+//                                "secure", "true"
+//                        ));
+//                    } catch (Exception e) {
+//                        throw new ServletException("Không thể khởi tạo Cloudinary: " + e.getMessage(), e);
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -142,23 +144,9 @@ public class ProductManagementController extends HttpServlet {
 
                 if (filePart != null && filePart.getSize() > 0) {
                     try {
-                        initializeCloudinary();
+                        
 
-                        InputStream inputStream = filePart.getInputStream();
-                        byte[] fileBytes = inputStream.readAllBytes(); 
-
-                        Map<String, Object> uploadResult = cloudinary.uploader().upload(
-                                fileBytes, 
-                                ObjectUtils.asMap(
-                                        "folder", "products",
-                                        "public_id", UUID.randomUUID().toString(),
-                                        "resource_type", "auto"
-                                )
-                        );
-
-                        // Lấy URL ảnh
-                        String imageUrl = (String) uploadResult.get("secure_url");
-                        System.out.println("Image URL from Cloudinary: " + imageUrl); 
+                        String imageUrl = cloudinaryService.uploadImage(filePart);
                         product.setImageLink(imageUrl);
 
                     } catch (Exception e) {
@@ -213,22 +201,7 @@ public class ProductManagementController extends HttpServlet {
 
                 if (filePart != null && filePart.getSize() > 0) {
                     try {
-                        initializeCloudinary();
-
-                        InputStream inputStream = filePart.getInputStream();
-                        byte[] fileBytes = inputStream.readAllBytes(); 
-
-                        Map<String, Object> uploadResult = cloudinary.uploader().upload(
-                                fileBytes, 
-                                ObjectUtils.asMap(
-                                        "folder", "products",
-                                        "public_id", UUID.randomUUID().toString(),
-                                        "resource_type", "auto"
-                                )
-                        );
-
-                        // Lấy URL ảnh
-                        String imageUrl = (String) uploadResult.get("secure_url");
+                        String imageUrl = cloudinaryService.uploadImage(filePart);
                         product.setImageLink(imageUrl);
 
                     } catch (Exception e) {
