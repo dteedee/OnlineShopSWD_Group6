@@ -71,7 +71,7 @@
                                     <td>${status.index + 1}</td>
                                     <td><img src="${fn:startsWith(p.imageLink, 'https://') ? p.imageLink : pageContext.request.contextPath.concat('/').concat(p.imageLink)}" 
                                              width="90" height="80" alt="${p.productName}"/></td>
-                                    <td>${p.productName}</td>
+                                    <td><a href="/OnlineShopSWD_Group6/ProductDetailController?id=${p.productID}">${p.productName}</a></td>
                                     <td>${p.category.categoryName}</td>
                                     <td>${p.provider}</td>
                                     <td>${p.getPriceFormat()}</td>

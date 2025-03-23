@@ -1,9 +1,7 @@
 package controller;
 
-import dao.SettingsDAO;
-import dao.UsersDAO;
-import model.Settings;
-import model.Users;
+import dao.*;
+import model.*;
 import java.io.IOException;
 import java.util.List;
 import jakarta.servlet.ServletException;

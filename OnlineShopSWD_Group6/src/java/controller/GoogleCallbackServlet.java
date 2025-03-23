@@ -56,6 +56,11 @@ public class GoogleCallbackServlet extends HttpServlet {
         Users user = userDAO.getUserByEmail(userInfo.getEmail());
         HttpSession session = request.getSession();
 
+        if (user != null && user.getStatus().equalsIgnoreCase("Deactive")) {
+            response.sendRedirect("Login.jsp?error=Tài khoản của bạn đã bị vô hiệu hoá");
+            return;
+        }
+
         if (user != null) {
             // User exists in the database, log them in
             session.setAttribute("username", user.getUserName());
@@ -104,11 +109,11 @@ public class GoogleCallbackServlet extends HttpServlet {
         conn.setDoOutput(true);
         conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
-        String params = "code=" + code +
-                "&client_id=" + CLIENT_ID +
-                "&client_secret=" + CLIENT_SECRET +
-                "&redirect_uri=" + REDIRECT_URI +
-                "&grant_type=authorization_code";
+        String params = "code=" + code
+                + "&client_id=" + CLIENT_ID
+                + "&client_secret=" + CLIENT_SECRET
+                + "&redirect_uri=" + REDIRECT_URI
+                + "&grant_type=authorization_code";
         byte[] postData = params.getBytes(StandardCharsets.UTF_8);
 
         try (OutputStream os = conn.getOutputStream()) {
@@ -150,6 +155,7 @@ public class GoogleCallbackServlet extends HttpServlet {
 
     // Class to hold the token response from Google
     private static class TokenResponse {
+
         private String access_token;
 
         public String getAccess_token() {
@@ -159,6 +165,7 @@ public class GoogleCallbackServlet extends HttpServlet {
 
     // Class to hold the user info from Google
     private static class GoogleUserInfo {
+
         private String email;
         private String given_name;
         private String family_name;

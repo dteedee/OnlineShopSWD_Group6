@@ -22,8 +22,8 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-@WebServlet(name = "ResetPasswordController", urlPatterns = {"/ResetPassword"})
-public class ResetPasswordController extends HttpServlet {
+@WebServlet("/ResetPassword")
+public class ResetPassword extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String email = request.getParameter("email");
@@ -35,7 +35,7 @@ public class ResetPasswordController extends HttpServlet {
         boolean emailExists = false;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/OSSDB", "root", "1234");
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/OSSDB", "root", "Tiendung11@");
             PreparedStatement pst = conn.prepareStatement("SELECT * FROM Users WHERE Email = ?");
             pst.setString(1, email);
             ResultSet rs = pst.executeQuery();

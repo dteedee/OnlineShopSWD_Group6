@@ -144,11 +144,8 @@ public class ProductManagementController extends HttpServlet {
 
                 if (filePart != null && filePart.getSize() > 0) {
                     try {
-                        
-
                         String imageUrl = cloudinaryService.uploadImage(filePart);
                         product.setImageLink(imageUrl);
-
                     } catch (Exception e) {
                         session.setAttribute("notificationErr", "Lỗi khi upload ảnh: " + e.getMessage());
                         response.sendRedirect(request.getContextPath() + "/admin/product-management");

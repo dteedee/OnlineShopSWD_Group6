@@ -201,7 +201,7 @@ public class ProductsDAO extends DBContext {
 
     public List<Products> getProductsByPaging(int index, int pageSize, String name, List<String> categoryIds, String orderBy) {
         List<Products> productList = new LinkedList<>();
-        String sql = "SELECT * FROM Products WHERE ProductName like ? ";
+        String sql = "SELECT * FROM Products WHERE ProductName like ? and status = 'active'  ";
         if (categoryIds.size() != 0) {
             sql += " AND ";
             String conditionCategory = "(";
