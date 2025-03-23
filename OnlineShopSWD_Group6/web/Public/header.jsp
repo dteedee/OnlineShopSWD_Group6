@@ -150,7 +150,7 @@
                         <li class="header__cart-items">
                             <a href="/OnlineShopSWD_Group6/OrderTrackingController" class="header__cart-link">
                                 <div class="icon">
-                                    <i class="fa-solid fa-badge-check"></i>
+                                    <i class="fa-solid fa-list-check"></i>
                                 </div>
                                 Kiểm tra đơn
                             </a>

@@ -104,13 +104,26 @@ CREATE TABLE CartItems (
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
 );
 
--- Bảng Settings
-CREATE TABLE Settings (
-    SettingID INT AUTO_INCREMENT PRIMARY KEY,
-    SettingType VARCHAR(100) NULL,
-    SettingValue TEXT NULL,
-    Status VARCHAR(20) NULL
+-- 4. Tạo bảng settings (không có khóa ngoại)
+CREATE TABLE settings (
+  SettingID INT PRIMARY KEY AUTO_INCREMENT,
+  SettingType VARCHAR(100),
+  SettingValue TEXT,
+  Status VARCHAR(20),
+  ID_Type VARCHAR(10),
+  priority INT DEFAULT 0
 );
+
+INSERT INTO settings (SettingID, SettingType, SettingValue, Status, ID_Type, priority) VALUES
+(1, 'UserRole', 'Shipper', 'Inactive', NULL, 0),
+(2, 'UserRole', 'Shipper', 'Inactive', NULL, 0),
+(3, 'UserRole', 'Haha', 'Inactive', 'UR9', 9),
+(4, 'UserRole', 'Customer', 'Active', 'UR1', 1),
+(5, 'UserRole', 'Marketing', 'Active', 'UR2', 2),
+(6, 'UserRole', 'Admin', 'Active', 'UR3', 3),
+(7, 'UserRole', 'Sale', 'Active', 'UR4', 4),
+(8, 'UserRole', 'Sale Manager', 'Active', 'UR5', 5),
+(9, 'Role', 'Shipper', 'Active', 'UR6', 6);
 
 -- Chèn dữ liệu vào bảng Users
 INSERT INTO Users (FirstName, LastName, Gender, DateOfBirth, UserName, Password, Role, Email, PhoneNumber, Address)
@@ -246,3 +259,5 @@ VALUES
 (13, 'COD', 99.99, '2025-03-12 16:05:00', 'Cancelled', 'TXN34568'),
 (14, 'Bank Transfer', 750.00, '2025-03-12 11:35:00', 'Pending', 'TXN45679'),
 (15, 'Credit Card', 1200.50, '2025-03-12 08:50:00', 'Completed', 'TXN56780');
+
+select * from products

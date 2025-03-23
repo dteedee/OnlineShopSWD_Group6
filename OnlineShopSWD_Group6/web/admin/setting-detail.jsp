@@ -33,6 +33,24 @@
                     <input type="hidden" name="settingID" value="${setting.settingID}" />
 
                     <div class="mb-3">
+                        <label class="form-label">ID Loại</label>
+                        <input type="text" name="idType" class="form-control" value="${setting.idType}"
+                               required minlength="2" maxlength="50" 
+                               title="ID Loại phải từ 2 đến 50 ký tự">
+                        <div class="invalid-feedback">
+                            Vui lòng nhập ID Loại (2-50 ký tự).
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Ưu tiên</label>
+                        <input type="number" name="priority" class="form-control" value="${setting.priority}"
+                               required min="1" max="10" 
+                               title="Ưu tiên phải từ 1 đến 10">
+                        <div class="invalid-feedback">
+                            Vui lòng nhập mức độ ưu tiên (từ 1 đến 10).
+                        </div>
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label">Loại cài đặt</label>
                         <input type="text" name="settingType" class="form-control" value="${setting.settingType}"
                                required minlength="2" maxlength="50" 
@@ -43,10 +61,10 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Giá trị cài đặt</label>
+                        <label class="form-label">Tên cài đặt</label>
                         <textarea name="settingValue" class="form-control" rows="3" required>${setting.settingValue}</textarea>
                         <div class="invalid-feedback">
-                            Vui lòng nhập giá trị cài đặt.
+                            Vui lòng nhập tên cài đặt.
                         </div>
                     </div>
 
@@ -70,8 +88,10 @@
             <c:otherwise>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item"><strong>ID:</strong> ${setting.settingID}</li>
+                    <li class="list-group-item"><strong>ID Loại:</strong> ${setting.idType}</li>
                     <li class="list-group-item"><strong>Loại cài đặt:</strong> ${setting.settingType}</li>
-                    <li class="list-group-item"><strong>Giá trị:</strong> ${setting.settingValue}</li>
+                    <li class="list-group-item"><strong>Ưu tiên:</strong> ${setting.priority}</li>
+                    <li class="list-group-item"><strong>Tên:</strong> ${setting.settingValue}</li>
                     <li class="list-group-item">
                         <strong>Trạng thái:</strong>
                         <c:choose>

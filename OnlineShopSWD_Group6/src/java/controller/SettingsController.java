@@ -1,9 +1,7 @@
 package controller;
 
-import dao.SettingsDAO;
-import dao.UsersDAO;
-import model.Settings;
-import model.Users;
+import dao.*;
+import model.*;
 import java.io.IOException;
 import java.util.List;
 import jakarta.servlet.ServletException;
@@ -12,6 +10,7 @@ import jakarta.servlet.http.*;
 
 @WebServlet(name = "SettingsController", urlPatterns = {"/admin/settings"})
 public class SettingsController extends HttpServlet {
+
     private final UsersDAO userDAO = new UsersDAO();
     private final SettingsDAO settingsDAO = new SettingsDAO();
 
@@ -68,13 +67,16 @@ public class SettingsController extends HttpServlet {
             String settingType = request.getParameter("settingType");
             String settingValue = request.getParameter("settingValue");
             String status = request.getParameter("status");
+            String idType = request.getParameter("idType");
+            String priority = request.getParameter("priority");
 
             Settings s = new Settings();
             s.setSettingType(settingType);
             s.setSettingValue(settingValue);
             s.setStatus(status);
-
-            boolean added = settingsDAO.addSetting(s);
+            s.setIdType(idType);
+            s.setPriority(Integer.parseInt(priority));
+            boolean added = settingsDAO.addSettings(s);
             if (added) {
                 session.setAttribute("notification", "Thêm Setting mới thành công!");
             } else {
@@ -91,9 +93,13 @@ public class SettingsController extends HttpServlet {
                 String settingType = request.getParameter("settingType");
                 String settingValue = request.getParameter("settingValue");
                 String status = request.getParameter("status");
+                String idType = request.getParameter("idType");
+                String priority = request.getParameter("priority");
 
                 Settings s = new Settings(id, settingType, settingValue, status);
-                boolean updated = settingsDAO.updateSetting(s);
+                s.setIdType(idType);
+                s.setPriority(Integer.parseInt(priority));
+                boolean updated = settingsDAO.updateSettings(s);
                 if (updated) {
                     session.setAttribute("notification", "Cập nhật Setting thành công!");
                 } else {

@@ -89,7 +89,7 @@ Author     : Tung Duong
                     <c:forEach var="category" items="${categories}">
                         <c:if test="${category.categoryID == categoryID}">
                             <li class="main__left-category-items">
-                                <a href="Category.jsp?id=${category.categoryID}" class="main__left-category-link">
+                                <a href="productsList?category=${category.categoryID}" class="main__left-category-link">
                                     ${category.categoryName}
                                 </a>
                             </li>
@@ -97,7 +97,6 @@ Author     : Tung Duong
                     </c:forEach>
                 </c:forEach>
             </ul>
-
             <!-- Main Left Promotional Products : Sản phẩm khuyến mãi -->
             <!-- Một số sản phẩm khuyến mãi - Hiển thị dưới Danh mục sản phẩm -->
             <h2 class="main__left-title main__left-margin-top">SẢN PHẨM KHUYẾN MÃI</h2>

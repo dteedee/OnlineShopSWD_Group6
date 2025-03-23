@@ -1,7 +1,6 @@
 package dao;
 
 import model.Settings;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -104,6 +103,9 @@ public class SettingsDAO extends DBContext {
         setting.setSettingType(rs.getString("SettingType"));
         setting.setSettingValue(rs.getString("SettingValue"));
         setting.setStatus(rs.getString("Status"));
+        setting.setIdType(rs.getString("id_type"));
+        setting.setPriority(rs.getInt("priority"));
+
         return setting;
     }
 
@@ -158,6 +160,8 @@ public class SettingsDAO extends DBContext {
                 s.setSettingType(rs.getString("SettingType"));
                 s.setSettingValue(rs.getString("SettingValue"));
                 s.setStatus(rs.getString("Status"));
+                s.setIdType(rs.getString("id_type"));
+                s.setPriority(rs.getInt("priority"));
                 list.add(s);
             }
         } catch (Exception e) {
@@ -170,12 +174,14 @@ public class SettingsDAO extends DBContext {
      * Lấy 1 Setting theo ID
      */
     public boolean addSettings(Settings s) {
-        String sql = "INSERT INTO Settings (SettingType, SettingValue, Status) "
-                + "VALUES (?, ?, ?)";
+        String sql = "INSERT INTO Settings (SettingType, SettingValue, Status, id_type, priority) "
+                + "VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement st = connection.prepareStatement(sql)) {
             st.setString(1, s.getSettingType());
             st.setString(2, s.getSettingValue());
             st.setString(3, s.getStatus());
+            st.setString(4, s.getIdType());
+            st.setInt(5, s.getPriority());
             int rows = st.executeUpdate();
             return rows > 0;
         } catch (Exception e) {
@@ -188,13 +194,15 @@ public class SettingsDAO extends DBContext {
      * Cập nhật Setting
      */
     public boolean updateSettings(Settings s) {
-        String sql = "UPDATE Settings SET SettingType = ?, SettingValue = ?, Status = ? "
+        String sql = "UPDATE Settings SET SettingType = ?, SettingValue = ?, Status = ? , id_type = ? , priority = ? "
                 + "WHERE SettingID = ?";
         try (PreparedStatement st = connection.prepareStatement(sql)) {
             st.setString(1, s.getSettingType());
             st.setString(2, s.getSettingValue());
             st.setString(3, s.getStatus());
-            st.setInt(4, s.getSettingID());
+            st.setString(4, s.getIdType());
+            st.setInt(5, s.getPriority());
+            st.setInt(6, s.getSettingID());
             int rows = st.executeUpdate();
             return rows > 0;
         } catch (Exception e) {

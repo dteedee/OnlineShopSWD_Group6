@@ -38,14 +38,14 @@
                     <!-- Danh mục sản phẩm - Gom các sản phẩm thành các danh mục nhỏ - Hiển thị trên cùng bên trái main trang web -->
                     <h2 class="main__left-title">DANH MỤC SẢN PHẨM</h2>
 
-                 
+
 
                     <ul class="main__left-category-list">
                         <c:forEach var="categoryID" items="${['TBQ', 'TBCS', 'CTD', 'TBTM', 'TBSCBT']}">
                             <c:forEach var="category" items="${categories}">
                                 <c:if test="${category.categoryID == categoryID}">
                                     <li class="main__left-category-items">
-                                        <a href="Category.jsp?id=${category.categoryID}" class="main__left-category-link">
+                                        <a href="productsList?category=${category.categoryID}" class="main__left-category-link">
                                             ${category.categoryName}
                                         </a>
                                     </li>
