@@ -220,9 +220,6 @@
                         <select class="form-select" id="role" name="role" required>
                             <option value="">Chọn vai trò</option>
                             <option value="Admin">Admin</option>
-                            <option value="SaleManager">Quản lý bán hàng</option>
-                            <option value="Sale">Nhân viên bán hàng</option>
-                            <option value="Marketing">Marketing</option>
                             <option value="Customer">Khách hàng</option>
                         </select>
                         <div class="invalid-feedback">
